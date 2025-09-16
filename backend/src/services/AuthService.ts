@@ -89,7 +89,14 @@ export class AuthService {
     this.prisma = new PrismaClient();
     this.redis = createClient({ url: config.redisUrl });
     this.userService = new UserService();
-    this.initializeRedis();
+
+    // Only initialize Redis in non-test environments or if explicitly enabled
+    if (process.env.NODE_ENV !== 'test' || process.env.ENABLE_REDIS_IN_TESTS === 'true') {
+      this.initializeRedis();
+    } else {
+      // Mock Redis for tests
+      this.mockRedisForTests();
+    }
   }
 
   private async initializeRedis(): Promise<void> {
@@ -100,6 +107,25 @@ export class AuthService {
       logger.error('Failed to connect to Redis:', error);
       throw new Error('Redis connection failed');
     }
+  }
+
+  private mockRedisForTests(): void {
+    // Mock Redis client for testing
+    const mockRedis = {
+      connect: () => Promise.resolve(),
+      disconnect: () => Promise.resolve(),
+      setEx: () => Promise.resolve('OK'),
+      get: () => Promise.resolve(null),
+      del: () => Promise.resolve(1),
+      incr: () => Promise.resolve(1),
+      expire: () => Promise.resolve(true),
+      ttl: () => Promise.resolve(-1),
+      keys: () => Promise.resolve([])
+    };
+
+    // Replace Redis client with mock
+    this.redis = mockRedis as any;
+    logger.info('Redis mocked for testing');
   }
 
   // ============================================================================

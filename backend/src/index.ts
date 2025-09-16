@@ -10,6 +10,9 @@ import { logger } from '@/lib/logger';
 import { config } from '@/lib/config';
 import { errorHandler } from '@/lib/middleware/errorHandler';
 import { notFoundHandler } from '@/lib/middleware/notFoundHandler';
+import authRoutes from '@/api/auth';
+import postRoutes from '@/api/posts';
+import settingsRoutes from '@/api/settings';
 
 // Load environment variables
 dotenv.config();
@@ -46,35 +49,42 @@ app.get('/health', (_req, res) => {
   });
 });
 
-// API routes will be added here
-// app.use('/api/v1/auth', authRoutes);
-// app.use('/api/v1/users', userRoutes);
-// app.use('/api/v1/posts', postRoutes);
-// app.use('/api/v1/ai', aiRoutes);
+// API routes
+app.use('/api/auth', authRoutes);
+// app.use('/api/users', userRoutes);
+app.use('/api/posts', postRoutes);
+// app.use('/api/personas', personaRoutes);
+app.use('/api/settings', settingsRoutes);
+// app.use('/api/news', newsRoutes);
+// app.use('/api/trends', trendsRoutes);
 
 // Error handling middleware
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-const server = app.listen(config.port, () => {
-  logger.info(`Server running on port ${config.port} in ${config.nodeEnv} mode`);
-});
-
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  logger.info('SIGTERM received, shutting down gracefully');
-  server.close(() => {
-    logger.info('Process terminated');
-    process.exit(0);
+// Only start server if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+  const server = app.listen(config.port, () => {
+    logger.info(`Server running on port ${config.port} in ${config.nodeEnv} mode`);
   });
-});
 
-process.on('SIGINT', () => {
-  logger.info('SIGINT received, shutting down gracefully');
-  server.close(() => {
-    logger.info('Process terminated');
-    process.exit(0);
+  // Graceful shutdown
+  process.on('SIGTERM', () => {
+    logger.info('SIGTERM received, shutting down gracefully');
+    server.close(() => {
+      logger.info('Process terminated');
+      process.exit(0);
+    });
   });
-});
 
+  process.on('SIGINT', () => {
+    logger.info('SIGINT received, shutting down gracefully');
+    server.close(() => {
+      logger.info('Process terminated');
+      process.exit(0);
+    });
+  });
+}
+
+export { app };
 export default app;

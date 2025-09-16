@@ -67,7 +67,7 @@ export interface ContentFilter {
 
 // Specific event types for type safety
 export interface PostCreatedEvent extends RealtimeEvent {
-  type: 'post_created';
+  type: 'posts';
   data: {
     postId: string;
     post: Post;
@@ -78,7 +78,7 @@ export interface PostCreatedEvent extends RealtimeEvent {
 }
 
 export interface PostReactionEvent extends RealtimeEvent {
-  type: 'post_reaction';
+  type: 'reactions';
   data: {
     postId: string;
     userId: string;
@@ -89,7 +89,7 @@ export interface PostReactionEvent extends RealtimeEvent {
 }
 
 export interface TrendUpdateEvent extends RealtimeEvent {
-  type: 'trend_update';
+  type: 'trends';
   data: {
     trend: Trend;
     action: 'new' | 'update' | 'expired';
@@ -98,7 +98,7 @@ export interface TrendUpdateEvent extends RealtimeEvent {
 }
 
 export interface NewsItemEvent extends RealtimeEvent {
-  type: 'news_item';
+  type: 'news';
   data: {
     newsItem: NewsItem;
     relevanceScore: number;
@@ -107,7 +107,7 @@ export interface NewsItemEvent extends RealtimeEvent {
 }
 
 export interface AIResponseEvent extends RealtimeEvent {
-  type: 'ai_response';
+  type: 'ai_responses';
   data: {
     responseId: string;
     post: Post;
@@ -118,7 +118,7 @@ export interface AIResponseEvent extends RealtimeEvent {
 }
 
 export interface TypingIndicatorEvent extends RealtimeEvent {
-  type: 'typing_indicator';
+  type: 'typing_indicators';
   data: {
     userId: string;
     threadId: string;
@@ -128,7 +128,7 @@ export interface TypingIndicatorEvent extends RealtimeEvent {
 }
 
 export interface LiveReactionEvent extends RealtimeEvent {
-  type: 'live_reaction';
+  type: 'live_reactions';
   data: {
     postId: string;
     userId: string;

@@ -2,11 +2,10 @@
 // Implements research.md:137-158 specifications and FR-007 regional filtering
 
 import { z } from 'zod';
-import { PrismaClient, NewsItem as PrismaNewsItem, NewsCategory } from '../generated/prisma';
-import Redis from 'ioredis';
+import { NewsItem as PrismaNewsItem, NewsCategory } from '../generated/prisma';
+import { prisma } from '../lib/database';
+import { redis } from '../lib/redis';
 
-const prisma = new PrismaClient();
-const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
 
 // News source configuration from research.md:118-123
 interface NewsSource {
@@ -90,11 +89,10 @@ export class NewsService {
     const cacheKey = `news:${JSON.stringify(options)}`;
 
     // Check cache first
-    const cached = await redis.get(cacheKey);
+    const cached = await redis.get<NewsAggregationResult>(cacheKey);
     if (cached) {
-      const result = JSON.parse(cached);
-      result.cached = true;
-      return result;
+      cached.cached = true;
+      return cached;
     }
 
     const activeSources = this.sources.filter(source => source.isActive);
@@ -143,7 +141,7 @@ export class NewsService {
     };
 
     // Cache the result
-    await redis.setex(cacheKey, this.CACHE_TTL, JSON.stringify(result));
+    await redis.set(cacheKey, result, { ttl: this.CACHE_TTL });
 
     return result;
   }
@@ -154,7 +152,7 @@ export class NewsService {
   private static async fetchFromSource(source: NewsSource, options: NewsSearchOptions): Promise<RawNewsItem[]> {
     // Check rate limit
     const rateLimitKey = `rate_limit:${source.name}`;
-    const currentCount = await redis.get(rateLimitKey);
+    const currentCount = await redis.get<string>(rateLimitKey, false);
 
     if (currentCount && parseInt(currentCount) >= source.rateLimit.requests) {
       console.warn(`Rate limit exceeded for ${source.name}`);
@@ -181,8 +179,7 @@ export class NewsService {
     // Update rate limit counter
     const period = source.rateLimit.period;
     const ttl = period === '1h' ? 3600 : period === '1d' ? 86400 : 3600;
-    await redis.incr(rateLimitKey);
-    await redis.expire(rateLimitKey, ttl);
+    await redis.incr(rateLimitKey, ttl);
 
     return articles;
   }
@@ -682,9 +679,9 @@ export class NewsService {
   static async getRecentNews(options: NewsSearchOptions = {}): Promise<PrismaNewsItem[]> {
     const cacheKey = `recent_news:${JSON.stringify(options)}`;
 
-    const cached = await redis.get(cacheKey);
+    const cached = await redis.get<PrismaNewsItem[]>(cacheKey);
     if (cached) {
-      return JSON.parse(cached);
+      return cached;
     }
 
     const where: any = {
@@ -711,7 +708,7 @@ export class NewsService {
       take: options.limit || 50
     });
 
-    await redis.setex(cacheKey, this.CACHE_TTL, JSON.stringify(news));
+    await redis.set(cacheKey, news, { ttl: this.CACHE_TTL });
 
     return news;
   }
