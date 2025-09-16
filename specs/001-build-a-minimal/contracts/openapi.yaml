@@ -1,0 +1,1850 @@
+openapi: 3.0.3
+info:
+  title: Politician/Influencer Social Media Simulator API
+  description: API for building politician/influencer social media platform with AI personas
+  version: 1.0.0
+  contact:
+    name: Development Team
+    
+servers:
+  - url: http://localhost:3000/api
+    description: Local development server
+  - url: https://api.socialplatform.com
+    description: Production server
+
+security:
+  - BearerAuth: []
+
+paths:
+  # Authentication endpoints
+  /auth/register:
+    post:
+      tags: [Authentication]
+      summary: Register new user account
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid registration data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Username or email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: User login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/logout:
+    post:
+      tags: [Authentication]
+      summary: User logout
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  # User endpoints
+  /users/profile:
+    get:
+      tags: [Users]
+      summary: Get current user profile
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    put:
+      tags: [Users]
+      summary: Update user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '400':
+          description: Invalid profile data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /users/{userId}:
+    get:
+      tags: [Users]
+      summary: Get user profile by ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicUserProfile'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users/{userId}/metrics:
+    get:
+      tags: [Users]
+      summary: Get user influence metrics
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: User influence metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfluenceMetrics'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Posts endpoints
+  /posts:
+    get:
+      tags: [Posts]
+      summary: Get public timeline posts
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+        - name: category
+          in: query
+          schema:
+            type: string
+            enum: [all, politics, technology, entertainment, sports]
+      responses:
+        '200':
+          description: List of posts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostListResponse'
+
+    post:
+      tags: [Posts]
+      summary: Create new post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePostRequest'
+      responses:
+        '201':
+          description: Post created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Invalid post data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /posts/{postId}:
+    get:
+      tags: [Posts]
+      summary: Get post by ID
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Post details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostDetail'
+        '404':
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      tags: [Posts]
+      summary: Update post
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePostRequest'
+      responses:
+        '200':
+          description: Post updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Invalid post data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Not authorized to edit this post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      tags: [Posts]
+      summary: Delete post
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Post deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Not authorized to delete this post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /posts/{postId}/replies:
+    get:
+      tags: [Posts]
+      summary: Get replies to a post
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        '200':
+          description: List of replies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostListResponse'
+        '404':
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      tags: [Posts]
+      summary: Reply to a post
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReplyRequest'
+      responses:
+        '201':
+          description: Reply created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Invalid reply data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /posts/{postId}/reactions:
+    post:
+      tags: [Posts]
+      summary: React to a post
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReactionRequest'
+      responses:
+        '201':
+          description: Reaction added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reaction'
+        '400':
+          description: Invalid reaction data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      tags: [Posts]
+      summary: Remove reaction from post
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: type
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/ReactionType'
+      responses:
+        '200':
+          description: Reaction removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Post or reaction not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Personas endpoints
+  /personas:
+    get:
+      tags: [Personas]
+      summary: Get list of AI personas
+      parameters:
+        - name: type
+          in: query
+          schema:
+            $ref: '#/components/schemas/PersonaType'
+        - name: active
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: List of personas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicPersona'
+
+    post:
+      tags: [Personas]
+      summary: Create custom AI persona
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePersonaRequest'
+      responses:
+        '201':
+          description: Persona created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Persona'
+        '400':
+          description: Invalid persona data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /personas/{personaId}:
+    get:
+      tags: [Personas]
+      summary: Get persona by ID
+      parameters:
+        - name: personaId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Persona details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPersona'
+        '404':
+          description: Persona not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      tags: [Personas]
+      summary: Update AI persona
+      parameters:
+        - name: personaId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePersonaRequest'
+      responses:
+        '200':
+          description: Persona updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Persona'
+        '400':
+          description: Invalid persona data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Not authorized to edit this persona
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Persona not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /personas/{personaId}/reply:
+    post:
+      tags: [Personas]
+      summary: Trigger AI persona reply to user content
+      parameters:
+        - name: personaId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonaReplyRequest'
+      responses:
+        '201':
+          description: AI response generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Persona not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: AI service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Settings endpoints
+  /settings:
+    get:
+      tags: [Settings]
+      summary: Get user settings
+      responses:
+        '200':
+          description: User settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Settings'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    put:
+      tags: [Settings]
+      summary: Update user settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSettingsRequest'
+      responses:
+        '200':
+          description: Settings updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Settings'
+        '400':
+          description: Invalid settings data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /settings/ai-config:
+    post:
+      tags: [Settings]
+      summary: Configure AI service settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIConfigRequest'
+      responses:
+        '200':
+          description: AI configuration updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Invalid AI configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # News and trends endpoints
+  /news:
+    get:
+      tags: [News]
+      summary: Get latest news items
+      parameters:
+        - name: category
+          in: query
+          schema:
+            $ref: '#/components/schemas/NewsCategory'
+        - name: region
+          in: query
+          schema:
+            type: string
+            description: ISO country code or "WORLDWIDE"
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        '200':
+          description: List of news items
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsListResponse'
+
+  /trends:
+    get:
+      tags: [Trends]
+      summary: Get trending topics
+      parameters:
+        - name: region
+          in: query
+          schema:
+            type: string
+            description: ISO country code or "WORLDWIDE"
+        - name: category
+          in: query
+          schema:
+            $ref: '#/components/schemas/TrendCategory'
+        - name: timeframe
+          in: query
+          schema:
+            type: string
+            enum: [1h, 6h, 24h]
+            default: 24h
+      responses:
+        '200':
+          description: List of trending topics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trend'
+
+  # Real-time endpoints
+  /live-updates:
+    get:
+      tags: [Real-time]
+      summary: Server-sent events for live updates
+      parameters:
+        - name: types
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [posts, reactions, news, trends]
+            description: Types of updates to receive
+      responses:
+        '200':
+          description: Event stream
+          content:
+            text/event-stream:
+              schema:
+                type: string
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    UnauthorizedError:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    # Authentication schemas
+    RegisterRequest:
+      type: object
+      required: [username, email, password, displayName, personaType]
+      properties:
+        username:
+          type: string
+          pattern: '^[a-zA-Z0-9_]{3,15}$'
+          example: "political_pundit"
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        password:
+          type: string
+          minLength: 8
+          example: "securePassword123"
+        displayName:
+          type: string
+          minLength: 1
+          maxLength: 50
+          example: "John Politician"
+        personaType:
+          $ref: '#/components/schemas/PersonaType'
+        bio:
+          type: string
+          maxLength: 280
+          example: "Passionate about political reform and social justice"
+        politicalStance:
+          $ref: '#/components/schemas/PoliticalStanceRequest'
+
+    LoginRequest:
+      type: object
+      required: [identifier, password]
+      properties:
+        identifier:
+          type: string
+          description: Username or email
+          example: "political_pundit"
+        password:
+          type: string
+          example: "securePassword123"
+
+    AuthResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        refreshToken:
+          type: string
+          example: "def50200c1a9..."
+        user:
+          $ref: '#/components/schemas/UserProfile'
+        expiresIn:
+          type: integer
+          example: 3600
+
+    # User schemas
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+          example: "political_pundit"
+        displayName:
+          type: string
+          example: "John Politician"
+        bio:
+          type: string
+          example: "Passionate about political reform and social justice"
+        profileImageUrl:
+          type: string
+          format: uri
+          example: "https://example.com/images/profile.jpg"
+        headerImageUrl:
+          type: string
+          format: uri
+          example: "https://example.com/images/header.jpg"
+        location:
+          type: string
+          example: "Washington, DC"
+        website:
+          type: string
+          format: uri
+          example: "https://johnpolitician.com"
+        personaType:
+          $ref: '#/components/schemas/PersonaType'
+        specialtyAreas:
+          type: array
+          items:
+            type: string
+          example: ["Healthcare", "Education", "Climate Change"]
+        verificationBadge:
+          type: boolean
+          example: false
+        followerCount:
+          type: integer
+          example: 1250
+        followingCount:
+          type: integer
+          example: 348
+        postCount:
+          type: integer
+          example: 142
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    PublicUserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        displayName:
+          type: string
+        bio:
+          type: string
+        profileImageUrl:
+          type: string
+          format: uri
+        headerImageUrl:
+          type: string
+          format: uri
+        location:
+          type: string
+        website:
+          type: string
+          format: uri
+        personaType:
+          $ref: '#/components/schemas/PersonaType'
+        specialtyAreas:
+          type: array
+          items:
+            type: string
+        verificationBadge:
+          type: boolean
+        followerCount:
+          type: integer
+        followingCount:
+          type: integer
+        postCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        displayName:
+          type: string
+          minLength: 1
+          maxLength: 50
+        bio:
+          type: string
+          maxLength: 280
+        location:
+          type: string
+          maxLength: 100
+        website:
+          type: string
+          format: uri
+        specialtyAreas:
+          type: array
+          items:
+            type: string
+          maxItems: 5
+
+    InfluenceMetrics:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        followerCount:
+          type: integer
+        followingCount:
+          type: integer
+        engagementRate:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+        reachScore:
+          type: number
+          format: float
+        approvalRating:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+        controversyLevel:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+        trendingScore:
+          type: number
+          format: float
+        followerGrowthDaily:
+          type: integer
+        followerGrowthWeekly:
+          type: integer
+        followerGrowthMonthly:
+          type: integer
+        totalLikes:
+          type: integer
+        totalReshares:
+          type: integer
+        totalComments:
+          type: integer
+        influenceRank:
+          type: integer
+        categoryRank:
+          type: integer
+        lastUpdated:
+          type: string
+          format: date-time
+
+    PoliticalStanceRequest:
+      type: object
+      properties:
+        economicPosition:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: "0=left, 50=center, 100=right"
+        socialPosition:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: "0=liberal, 50=moderate, 100=conservative"
+        primaryIssues:
+          type: array
+          items:
+            type: string
+          maxItems: 5
+        partyAffiliation:
+          type: string
+        ideologyTags:
+          type: array
+          items:
+            type: string
+          maxItems: 10
+        debateWillingness:
+          type: number
+          minimum: 0
+          maximum: 100
+        controversyTolerance:
+          type: number
+          minimum: 0
+          maximum: 100
+
+    # Post schemas
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        authorId:
+          type: string
+          format: uuid
+        personaId:
+          type: string
+          format: uuid
+          nullable: true
+        content:
+          type: string
+          maxLength: 280
+        mediaUrls:
+          type: array
+          items:
+            type: string
+            format: uri
+          maxItems: 4
+        linkPreview:
+          $ref: '#/components/schemas/LinkPreview'
+        threadId:
+          type: string
+          format: uuid
+        parentPostId:
+          type: string
+          format: uuid
+          nullable: true
+        repostOfId:
+          type: string
+          format: uuid
+          nullable: true
+        isAIGenerated:
+          type: boolean
+        hashtags:
+          type: array
+          items:
+            type: string
+        mentions:
+          type: array
+          items:
+            type: string
+        newsItemId:
+          type: string
+          format: uuid
+          nullable: true
+        likeCount:
+          type: integer
+        repostCount:
+          type: integer
+        commentCount:
+          type: integer
+        impressionCount:
+          type: integer
+        contentWarning:
+          type: string
+          nullable: true
+        isHidden:
+          type: boolean
+        publishedAt:
+          type: string
+          format: date-time
+        editedAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        author:
+          $ref: '#/components/schemas/PublicUserProfile'
+        persona:
+          $ref: '#/components/schemas/PublicPersona'
+
+    PostDetail:
+      allOf:
+        - $ref: '#/components/schemas/Post'
+        - type: object
+          properties:
+            replies:
+              type: array
+              items:
+                $ref: '#/components/schemas/Post'
+            newsContext:
+              $ref: '#/components/schemas/NewsItem'
+
+    CreatePostRequest:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+          minLength: 1
+          maxLength: 280
+        mediaUrls:
+          type: array
+          items:
+            type: string
+            format: uri
+          maxItems: 4
+        parentPostId:
+          type: string
+          format: uuid
+          description: "For replies"
+        repostOfId:
+          type: string
+          format: uuid
+          description: "For reposts"
+        newsItemId:
+          type: string
+          format: uuid
+          description: "Reference to news item"
+        contentWarning:
+          type: string
+          description: "Content warning label"
+
+    CreateReplyRequest:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+          minLength: 1
+          maxLength: 280
+        mediaUrls:
+          type: array
+          items:
+            type: string
+            format: uri
+          maxItems: 4
+
+    UpdatePostRequest:
+      type: object
+      properties:
+        content:
+          type: string
+          minLength: 1
+          maxLength: 280
+        contentWarning:
+          type: string
+
+    PostListResponse:
+      type: object
+      properties:
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+
+    LinkPreview:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+        title:
+          type: string
+        description:
+          type: string
+        imageUrl:
+          type: string
+          format: uri
+        siteName:
+          type: string
+
+    # Reaction schemas
+    Reaction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        postId:
+          type: string
+          format: uuid
+        type:
+          $ref: '#/components/schemas/ReactionType'
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateReactionRequest:
+      type: object
+      required: [type]
+      properties:
+        type:
+          $ref: '#/components/schemas/ReactionType'
+
+    ReactionType:
+      type: string
+      enum: [LIKE, REPOST, BOOKMARK, REPORT]
+
+    # Persona schemas
+    Persona:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        handle:
+          type: string
+        bio:
+          type: string
+        profileImageUrl:
+          type: string
+          format: uri
+        personaType:
+          $ref: '#/components/schemas/PersonaType'
+        personalityTraits:
+          type: array
+          items:
+            type: string
+        interests:
+          type: array
+          items:
+            type: string
+        expertise:
+          type: array
+          items:
+            type: string
+        toneStyle:
+          $ref: '#/components/schemas/ToneStyle'
+        controversyTolerance:
+          type: number
+          minimum: 0
+          maximum: 100
+        engagementFrequency:
+          type: number
+          minimum: 0
+          maximum: 100
+        debateAggression:
+          type: number
+          minimum: 0
+          maximum: 100
+        postingSchedule:
+          $ref: '#/components/schemas/PostingSchedule'
+        timezonePreference:
+          type: string
+        isActive:
+          type: boolean
+        isDefault:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    PublicPersona:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        handle:
+          type: string
+        bio:
+          type: string
+        profileImageUrl:
+          type: string
+          format: uri
+        personaType:
+          $ref: '#/components/schemas/PersonaType'
+        personalityTraits:
+          type: array
+          items:
+            type: string
+        interests:
+          type: array
+          items:
+            type: string
+        expertise:
+          type: array
+          items:
+            type: string
+        toneStyle:
+          $ref: '#/components/schemas/ToneStyle'
+        isActive:
+          type: boolean
+        isDefault:
+          type: boolean
+
+    CreatePersonaRequest:
+      type: object
+      required: [name, handle, bio, personaType]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+        handle:
+          type: string
+          pattern: '^[a-zA-Z0-9_]{3,15}$'
+        bio:
+          type: string
+          minLength: 1
+          maxLength: 500
+        personaType:
+          $ref: '#/components/schemas/PersonaType'
+        personalityTraits:
+          type: array
+          items:
+            type: string
+          maxItems: 10
+        interests:
+          type: array
+          items:
+            type: string
+          maxItems: 10
+        expertise:
+          type: array
+          items:
+            type: string
+          maxItems: 10
+        toneStyle:
+          $ref: '#/components/schemas/ToneStyle'
+        controversyTolerance:
+          type: number
+          minimum: 0
+          maximum: 100
+          default: 50
+        engagementFrequency:
+          type: number
+          minimum: 0
+          maximum: 100
+          default: 50
+        debateAggression:
+          type: number
+          minimum: 0
+          maximum: 100
+          default: 50
+        postingSchedule:
+          $ref: '#/components/schemas/PostingSchedule'
+
+    UpdatePersonaRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+        bio:
+          type: string
+          minLength: 1
+          maxLength: 500
+        personalityTraits:
+          type: array
+          items:
+            type: string
+          maxItems: 10
+        interests:
+          type: array
+          items:
+            type: string
+          maxItems: 10
+        expertise:
+          type: array
+          items:
+            type: string
+          maxItems: 10
+        toneStyle:
+          $ref: '#/components/schemas/ToneStyle'
+        controversyTolerance:
+          type: number
+          minimum: 0
+          maximum: 100
+        engagementFrequency:
+          type: number
+          minimum: 0
+          maximum: 100
+        debateAggression:
+          type: number
+          minimum: 0
+          maximum: 100
+        postingSchedule:
+          $ref: '#/components/schemas/PostingSchedule'
+        isActive:
+          type: boolean
+
+    PersonaReplyRequest:
+      type: object
+      required: [context]
+      properties:
+        context:
+          type: string
+          description: "Context for AI persona to respond to"
+        postId:
+          type: string
+          format: uuid
+          description: "Post to reply to (optional)"
+        newsItemId:
+          type: string
+          format: uuid
+          description: "News item to react to (optional)"
+
+    PersonaType:
+      type: string
+      enum: [POLITICIAN, INFLUENCER, JOURNALIST, ACTIVIST, BUSINESS, ENTERTAINER]
+
+    ToneStyle:
+      type: string
+      enum: [PROFESSIONAL, CASUAL, HUMOROUS, SERIOUS, SARCASTIC, EMPATHETIC]
+
+    PostingSchedule:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          default: true
+        postsPerDay:
+          type: number
+          minimum: 0
+          maximum: 50
+          default: 3
+        activeHours:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 23
+          description: "Hours of day when active (0-23)"
+        activeDays:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 6
+          description: "Days of week when active (0-6, Sunday=0)"
+        newsReactionChance:
+          type: number
+          minimum: 0
+          maximum: 100
+          default: 25
+          description: "Percentage chance to react to news"
+
+    # Settings schemas
+    Settings:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        newsRegion:
+          type: string
+          description: "ISO country code or 'WORLDWIDE'"
+          default: "WORLDWIDE"
+        newsCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsCategory'
+        newsLanguages:
+          type: array
+          items:
+            type: string
+          description: "ISO 639-1 language codes"
+        aiChatterLevel:
+          type: number
+          minimum: 0
+          maximum: 100
+          default: 50
+        aiPersonalities:
+          type: array
+          items:
+            type: string
+        aiResponseTone:
+          $ref: '#/components/schemas/ToneStyle'
+        emailNotifications:
+          type: boolean
+          default: true
+        pushNotifications:
+          type: boolean
+          default: true
+        notificationCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationCategory'
+        profileVisibility:
+          $ref: '#/components/schemas/ProfileVisibility'
+        allowPersonaInteractions:
+          type: boolean
+          default: true
+        allowDataForAI:
+          type: boolean
+          default: true
+        theme:
+          $ref: '#/components/schemas/Theme'
+        language:
+          type: string
+          default: "en"
+        timezone:
+          type: string
+          default: "UTC"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    UpdateSettingsRequest:
+      type: object
+      properties:
+        newsRegion:
+          type: string
+        newsCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsCategory'
+        newsLanguages:
+          type: array
+          items:
+            type: string
+        aiChatterLevel:
+          type: number
+          minimum: 0
+          maximum: 100
+        aiPersonalities:
+          type: array
+          items:
+            type: string
+        aiResponseTone:
+          $ref: '#/components/schemas/ToneStyle'
+        emailNotifications:
+          type: boolean
+        pushNotifications:
+          type: boolean
+        notificationCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationCategory'
+        profileVisibility:
+          $ref: '#/components/schemas/ProfileVisibility'
+        allowPersonaInteractions:
+          type: boolean
+        allowDataForAI:
+          type: boolean
+        theme:
+          $ref: '#/components/schemas/Theme'
+        language:
+          type: string
+        timezone:
+          type: string
+
+    AIConfigRequest:
+      type: object
+      properties:
+        customAIApiKey:
+          type: string
+          description: "Custom AI API key"
+        customAIBaseUrl:
+          type: string
+          format: uri
+          description: "Custom AI service URL"
+
+    NotificationCategory:
+      type: string
+      enum: [MENTIONS, REPLIES, LIKES, REPOSTS, FOLLOWERS, NEWS_ALERTS, PERSONA_INTERACTIONS]
+
+    ProfileVisibility:
+      type: string
+      enum: [PUBLIC, FOLLOWERS_ONLY, PRIVATE]
+
+    Theme:
+      type: string
+      enum: [LIGHT, DARK, AUTO]
+
+    # News schemas
+    NewsItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        content:
+          type: string
+        url:
+          type: string
+          format: uri
+        sourceName:
+          type: string
+        sourceUrl:
+          type: string
+          format: uri
+        author:
+          type: string
+        category:
+          $ref: '#/components/schemas/NewsCategory'
+        topics:
+          type: array
+          items:
+            type: string
+        keywords:
+          type: array
+          items:
+            type: string
+        entities:
+          type: array
+          items:
+            type: string
+        country:
+          type: string
+        region:
+          type: string
+        language:
+          type: string
+        sentimentScore:
+          type: number
+          minimum: -1
+          maximum: 1
+        impactScore:
+          type: number
+          minimum: 0
+          maximum: 100
+        controversyScore:
+          type: number
+          minimum: 0
+          maximum: 100
+        publishedAt:
+          type: string
+          format: date-time
+        discoveredAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        aiSummary:
+          type: string
+        topicTags:
+          type: array
+          items:
+            type: string
+
+    NewsListResponse:
+      type: object
+      properties:
+        news:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsItem'
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+
+    NewsCategory:
+      type: string
+      enum: [POLITICS, BUSINESS, TECHNOLOGY, SPORTS, ENTERTAINMENT, HEALTH, SCIENCE, WORLD, LOCAL]
+
+    # Trend schemas
+    Trend:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        hashtag:
+          type: string
+        keyword:
+          type: string
+        topic:
+          type: string
+        postCount:
+          type: integer
+        uniqueUsers:
+          type: integer
+        impressionCount:
+          type: integer
+        engagementCount:
+          type: integer
+        trendScore:
+          type: number
+          minimum: 0
+          maximum: 100
+        velocity:
+          type: number
+        peakTime:
+          type: string
+          format: date-time
+        category:
+          $ref: '#/components/schemas/TrendCategory'
+        region:
+          type: string
+        language:
+          type: string
+        isPromoted:
+          type: boolean
+        isHidden:
+          type: boolean
+        startedAt:
+          type: string
+          format: date-time
+        endedAt:
+          type: string
+          format: date-time
+        lastUpdated:
+          type: string
+          format: date-time
+
+    TrendCategory:
+      type: string
+      enum: [BREAKING_NEWS, POLITICS, ENTERTAINMENT, SPORTS, TECHNOLOGY, MEME, HASHTAG_GAME, OTHER]
+
+    # Common schemas
+    PaginationInfo:
+      type: object
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 50
+        total:
+          type: integer
+        totalPages:
+          type: integer
+        hasNext:
+          type: boolean
+        hasPrev:
+          type: boolean
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Operation completed successfully"
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Invalid request data"
+        message:
+          type: string
+          example: "The provided data does not meet validation requirements"
+        code:
+          type: string
+          example: "VALIDATION_ERROR"
+        details:
+          type: object
+          additionalProperties: true
