@@ -1,0 +1,504 @@
+// AI Social Media Platform - Database Schema
+// PostgreSQL 16 with Prisma ORM
+// Generated: 2025-09-16
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// USER MANAGEMENT
+// ============================================================================
+
+model UserAccount {
+  id              String   @id @default(cuid())
+  username        String   @unique @db.VarChar(15)
+  email           String   @unique @db.VarChar(255)
+  passwordHash    String   @db.VarChar(255)
+  emailVerified   Boolean  @default(false)
+  isActive        Boolean  @default(true)
+  lastLoginAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // One-to-one relationships
+  profile           UserProfile?
+  politicalAlignment PoliticalAlignment?
+  influenceMetrics   InfluenceMetrics?
+  settings          Settings?
+
+  // One-to-many relationships
+  posts     Post[]
+  reactions Reaction[]
+
+  @@map("user_accounts")
+}
+
+model UserProfile {
+  id               String      @id @default(cuid())
+  userId           String      @unique
+  displayName      String      @db.VarChar(50)
+  bio              String?     @db.VarChar(280)
+  profileImageUrl  String?     @db.VarChar(512)
+  headerImageUrl   String?     @db.VarChar(512)
+  location         String?     @db.VarChar(100)
+  website          String?     @db.VarChar(512)
+
+  // Persona-specific fields
+  personaType       PersonaType
+  specialtyAreas    String[]    @db.VarChar(30)
+  verificationBadge Boolean     @default(false)
+
+  // Engagement metrics (denormalized for performance)
+  followerCount     Int         @default(0)
+  followingCount    Int         @default(0)
+  postCount         Int         @default(0)
+
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  // Relationships
+  user UserAccount @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+model PoliticalAlignment {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+
+  // Political spectrum positioning (0-100 scale)
+  economicPosition     Int      @db.SmallInt // 0=left, 50=center, 100=right
+  socialPosition       Int      @db.SmallInt // 0=liberal, 50=moderate, 100=conservative
+
+  // Specific stances
+  primaryIssues        String[] @db.VarChar(50)
+  partyAffiliation     String?  @db.VarChar(100)
+  ideologyTags         String[] @db.VarChar(30)
+
+  // Engagement preferences
+  debateWillingness    Int      @db.SmallInt // 0-100
+  controversyTolerance Int      @db.SmallInt // 0-100
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  // Relationships
+  user     UserAccount @relation(fields: [userId], references: [id], onDelete: Cascade)
+  personas Persona[]
+
+  @@map("political_alignments")
+}
+
+model InfluenceMetrics {
+  id                      String   @id @default(cuid())
+  userId                  String   @unique
+
+  // Core metrics
+  followerCount           Int      @default(0)
+  followingCount          Int      @default(0)
+  engagementRate          Float    @default(0.0) @db.Real
+  reachScore              Int      @default(0)
+
+  // Politician/Influencer specific metrics
+  approvalRating          Int      @default(50) @db.SmallInt // 0-100
+  controversyLevel        Int      @default(0) @db.SmallInt  // 0-100
+  trendingScore           Int      @default(0)
+
+  // Growth tracking
+  followerGrowthDaily     Int      @default(0)
+  followerGrowthWeekly    Int      @default(0)
+  followerGrowthMonthly   Int      @default(0)
+
+  // Engagement breakdown
+  totalLikes              Int      @default(0)
+  totalReshares           Int      @default(0)
+  totalComments           Int      @default(0)
+
+  // Calculated fields
+  influenceRank           Int      @default(0)
+  categoryRank            Int      @default(0)
+
+  lastUpdated             DateTime @default(now())
+  createdAt               DateTime @default(now())
+
+  // Relationships
+  user UserAccount @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("influence_metrics")
+}
+
+model Settings {
+  id                       String                  @id @default(cuid())
+  userId                   String                  @unique
+
+  // News preferences
+  newsRegion               String                  @default("WORLDWIDE") @db.VarChar(10)
+  newsCategories           NewsCategory[]
+  newsLanguages            String[]                @db.VarChar(5)
+
+  // AI interaction preferences
+  aiChatterLevel           Int                     @default(50) @db.SmallInt // 0-100
+  aiPersonalities          String[]                @db.VarChar(30)
+  aiResponseTone           ToneStyle               @default(PROFESSIONAL)
+
+  // Notification preferences
+  emailNotifications       Boolean                 @default(true)
+  pushNotifications        Boolean                 @default(true)
+  notificationCategories   NotificationCategory[]
+
+  // Privacy settings
+  profileVisibility        ProfileVisibility       @default(PUBLIC)
+  allowPersonaInteractions Boolean                 @default(true)
+  allowDataForAI          Boolean                 @default(true)
+
+  // Display preferences
+  theme                    Theme                   @default(AUTO)
+  language                 String                  @default("en") @db.VarChar(5)
+  timezone                 String                  @default("UTC") @db.VarChar(50)
+
+  // API configuration (for power users)
+  customAIApiKey           String?                 @db.VarChar(512)
+  customAIBaseUrl          String?                 @db.VarChar(512)
+
+  createdAt                DateTime                @default(now())
+  updatedAt                DateTime                @updatedAt
+
+  // Relationships
+  user UserAccount @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("settings")
+}
+
+// ============================================================================
+// CONTENT MANAGEMENT
+// ============================================================================
+
+model Post {
+  id               String    @id @default(cuid())
+  authorId         String
+  personaId        String?
+
+  // Content
+  content          String    @db.VarChar(280)
+  mediaUrls        String[]  @db.VarChar(512)
+  linkPreview      Json?     // LinkPreview interface
+
+  // Threading
+  threadId         String
+  parentPostId     String?
+  repostOfId       String?
+
+  // Metadata
+  isAIGenerated    Boolean   @default(false)
+  hashtags         String[]  @db.VarChar(100)
+  mentions         String[]  @db.VarChar(15)
+
+  // News integration
+  newsItemId       String?
+  newsContext      String?   @db.VarChar(500)
+
+  // Engagement metrics (denormalized)
+  likeCount        Int       @default(0)
+  repostCount      Int       @default(0)
+  commentCount     Int       @default(0)
+  impressionCount  Int       @default(0)
+
+  // Moderation
+  contentWarning   String?   @db.VarChar(100)
+  isHidden         Boolean   @default(false)
+  reportCount      Int       @default(0)
+
+  // Timestamps
+  publishedAt      DateTime  @default(now())
+  editedAt         DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  // Relationships
+  author      UserAccount  @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  persona     Persona?     @relation(fields: [personaId], references: [id], onDelete: SetNull)
+  thread      Thread       @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  parentPost  Post?        @relation("PostReplies", fields: [parentPostId], references: [id], onDelete: SetNull)
+  repostOf    Post?        @relation("PostReposts", fields: [repostOfId], references: [id], onDelete: SetNull)
+  newsItem    NewsItem?    @relation(fields: [newsItemId], references: [id], onDelete: SetNull)
+
+  // One-to-many relationships
+  replies     Post[]       @relation("PostReplies")
+  reposts     Post[]       @relation("PostReposts")
+  reactions   Reaction[]
+
+  @@index([publishedAt(sort: Desc), isHidden], name: "idx_posts_timeline")
+  @@index([authorId, publishedAt(sort: Desc)], name: "idx_posts_author")
+  @@index([threadId, createdAt], name: "idx_posts_thread")
+  @@index([parentPostId], name: "idx_posts_parent")
+  @@map("posts")
+}
+
+model Thread {
+  id               String   @id @default(cuid())
+  originalPostId   String   @unique
+  title            String?  @db.VarChar(100)
+
+  // Thread metadata
+  participantCount Int      @default(1)
+  postCount        Int      @default(1)
+  maxDepth         Int      @default(0)
+
+  // Engagement
+  totalLikes       Int      @default(0)
+  totalReshares    Int      @default(0)
+  lastActivityAt   DateTime @default(now())
+
+  // Moderation
+  isLocked         Boolean  @default(false)
+  isHidden         Boolean  @default(false)
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relationships
+  posts Post[]
+
+  @@map("threads")
+}
+
+model Reaction {
+  id        String      @id @default(cuid())
+  userId    String
+  postId    String
+  type      ReactionType
+  createdAt DateTime    @default(now())
+
+  // Relationships
+  user UserAccount @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  // Composite unique constraint to prevent duplicate reactions
+  @@unique([userId, postId, type], name: "unique_user_post_reaction")
+  @@index([postId, type], name: "idx_reactions_post")
+  @@index([userId, createdAt(sort: Desc)], name: "idx_reactions_user")
+  @@map("reactions")
+}
+
+// ============================================================================
+// AI PERSONAS
+// ============================================================================
+
+model Persona {
+  id                    String              @id @default(cuid())
+  name                  String              @db.VarChar(50)
+  handle                String              @unique @db.VarChar(15)
+  bio                   String              @db.VarChar(500)
+  profileImageUrl       String              @db.VarChar(512)
+
+  // Personality configuration
+  personaType           PersonaType
+  personalityTraits     String[]            @db.VarChar(50)
+  interests             String[]            @db.VarChar(50)
+  expertise             String[]            @db.VarChar(50)
+
+  // Behavioral parameters
+  toneStyle             ToneStyle           @default(PROFESSIONAL)
+  controversyTolerance  Int                 @default(50) @db.SmallInt // 0-100
+  engagementFrequency   Int                 @default(50) @db.SmallInt // 0-100
+  debateAggression      Int                 @default(50) @db.SmallInt // 0-100
+
+  // Political alignment
+  politicalAlignmentId  String
+
+  // AI configuration
+  aiProvider            String              @default("claude") @db.VarChar(50)
+  systemPrompt          String              @db.Text
+  contextWindow         Int                 @default(4000)
+
+  // Scheduling
+  postingSchedule       Json                // PostingSchedule interface
+  timezonePreference    String              @default("UTC") @db.VarChar(50)
+
+  // Status
+  isActive              Boolean             @default(true)
+  isDefault             Boolean             @default(false)
+
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  // Relationships
+  politicalAlignment PoliticalAlignment @relation(fields: [politicalAlignmentId], references: [id], onDelete: Cascade)
+  posts              Post[]
+
+  @@map("personas")
+}
+
+// ============================================================================
+// NEWS AND TRENDS
+// ============================================================================
+
+model NewsItem {
+  id               String       @id @default(cuid())
+
+  // Core content
+  title            String       @db.VarChar(255)
+  description      String       @db.Text
+  content          String?      @db.Text
+  url              String       @unique @db.VarChar(512)
+
+  // Source information
+  sourceName       String       @db.VarChar(100)
+  sourceUrl        String       @db.VarChar(512)
+  author           String?      @db.VarChar(100)
+
+  // Classification
+  category         NewsCategory @default(WORLD)
+  topics           String[]     @db.VarChar(100)
+  keywords         String[]     @db.VarChar(50)
+  entities         String[]     @db.VarChar(100)
+
+  // Geolocation
+  country          String?      @db.VarChar(2)   // ISO 3166-1
+  region           String?      @db.VarChar(100)
+  language         String       @default("en") @db.VarChar(5) // ISO 639-1
+
+  // Sentiment and impact
+  sentimentScore   Float        @default(0.0) @db.Real // -1 to 1
+  impactScore      Int          @default(0) @db.SmallInt // 0-100
+  controversyScore Int          @default(0) @db.SmallInt // 0-100
+
+  // Timestamps
+  publishedAt      DateTime
+  discoveredAt     DateTime     @default(now())
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  // AI analysis
+  aiSummary        String?      @db.Text
+  topicTags        String[]     @db.VarChar(50)
+
+  // Relationships
+  trends       Trend[]
+  relatedPosts Post[]
+
+  @@index([publishedAt(sort: Desc), category], name: "idx_news_published")
+  @@map("news_items")
+}
+
+model Trend {
+  id               String        @id @default(cuid())
+
+  // Trend identification
+  hashtag          String?       @db.VarChar(100)
+  keyword          String?       @db.VarChar(100)
+  topic            String        @db.VarChar(100)
+
+  // Metrics (24-hour window)
+  postCount        Int           @default(0)
+  uniqueUsers      Int           @default(0)
+  impressionCount  Int           @default(0)
+  engagementCount  Int           @default(0)
+
+  // Scoring
+  trendScore       Int           @default(0) @db.SmallInt // 0-100
+  velocity         Float         @default(0.0) @db.Real
+  peakTime         DateTime?
+
+  // Classification
+  category         TrendCategory @default(OTHER)
+  region           String?       @db.VarChar(100)
+  language         String        @default("en") @db.VarChar(5)
+
+  // Status
+  isPromoted       Boolean       @default(false)
+  isHidden         Boolean       @default(false)
+
+  // Time tracking
+  startedAt        DateTime      @default(now())
+  endedAt          DateTime?
+  lastUpdated      DateTime      @default(now())
+  createdAt        DateTime      @default(now())
+
+  // Relationships
+  newsItems NewsItem[]
+
+  @@index([trendScore(sort: Desc), lastUpdated(sort: Desc)], name: "idx_trends_score")
+  @@map("trends")
+}
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum PersonaType {
+  POLITICIAN
+  INFLUENCER
+  JOURNALIST
+  ACTIVIST
+  BUSINESS
+  ENTERTAINER
+}
+
+enum ToneStyle {
+  PROFESSIONAL
+  CASUAL
+  HUMOROUS
+  SERIOUS
+  SARCASTIC
+  EMPATHETIC
+}
+
+enum ReactionType {
+  LIKE
+  REPOST
+  BOOKMARK
+  REPORT
+}
+
+enum NewsCategory {
+  POLITICS
+  BUSINESS
+  TECHNOLOGY
+  SPORTS
+  ENTERTAINMENT
+  HEALTH
+  SCIENCE
+  WORLD
+  LOCAL
+}
+
+enum TrendCategory {
+  BREAKING_NEWS
+  POLITICS
+  ENTERTAINMENT
+  SPORTS
+  TECHNOLOGY
+  MEME
+  HASHTAG_GAME
+  OTHER
+}
+
+enum NotificationCategory {
+  MENTIONS
+  REPLIES
+  LIKES
+  REPOSTS
+  FOLLOWERS
+  NEWS_ALERTS
+  PERSONA_INTERACTIONS
+}
+
+enum ProfileVisibility {
+  PUBLIC
+  FOLLOWERS_ONLY
+  PRIVATE
+}
+
+enum Theme {
+  LIGHT
+  DARK
+  AUTO
+}
