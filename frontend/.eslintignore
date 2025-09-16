@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+.npm/
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+
+# Environment files
+.env*
+
+# Configuration files (already handled in .eslintrc.js)
+*.config.js
+*.config.ts
+
+# Generated files
+*.tsbuildinfo
+.eslintcache
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# Cache directories
+.cache/
+.turbo/
+
+# Prisma generated
+prisma/migrations/
+
+# Playwright
+playwright-report/
+test-results/
+
+# Temporary files
+*.tmp
+*.temp

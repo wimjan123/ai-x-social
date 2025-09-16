@@ -1,0 +1,139 @@
+# Multi-stage Dockerfile for Node.js Backend API
+# Optimized for AI Social Media Platform
+
+# Base stage with Node.js 22
+FROM node:22-alpine AS base
+LABEL maintainer="AI Social Platform Team"
+LABEL description="Backend API for AI-powered social media platform"
+
+# Install system dependencies and security updates
+RUN apk add --no-cache \
+    dumb-init \
+    curl \
+    ca-certificates \
+    tzdata \
+    && apk upgrade \
+    && rm -rf /var/cache/apk/*
+
+# Create app user for security
+RUN addgroup --system --gid 1001 nodejs \
+    && adduser --system --uid 1001 --ingroup nodejs backend
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files for dependency installation
+COPY backend/package*.json ./
+COPY backend/prisma ./prisma/
+
+# Development stage
+FROM base AS development
+ENV NODE_ENV=development
+
+# Install all dependencies including dev dependencies
+RUN npm ci --include=dev --no-audit --no-fund
+
+# Copy source code
+COPY backend/ .
+
+# Generate Prisma client
+RUN npx prisma generate
+
+# Create logs directory
+RUN mkdir -p logs && chown -R backend:nodejs logs
+
+# Switch to non-root user
+USER backend
+
+# Expose port
+EXPOSE 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:3001/health || exit 1
+
+# Start development server with hot reload
+CMD ["dumb-init", "npm", "run", "dev"]
+
+# Dependencies stage for production
+FROM base AS deps
+ENV NODE_ENV=production
+
+# Install only production dependencies
+RUN npm ci --only=production --no-audit --no-fund && npm cache clean --force
+
+# Builder stage
+FROM base AS builder
+ENV NODE_ENV=production
+
+# Install all dependencies for build
+RUN npm ci --include=dev --no-audit --no-fund
+
+# Copy source code
+COPY backend/ .
+
+# Generate Prisma client for production
+RUN npx prisma generate
+
+# Build the application (if you have a build step)
+RUN npm run build 2>/dev/null || echo "No build step defined, skipping..."
+
+# Production stage
+FROM base AS production
+ENV NODE_ENV=production
+
+# Copy production dependencies
+COPY --from=deps --chown=backend:nodejs /app/node_modules ./node_modules
+
+# Copy built application
+COPY --from=builder --chown=backend:nodejs /app/dist ./dist 2>/dev/null || echo "No dist directory"
+COPY --from=builder --chown=backend:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=backend:nodejs /app/package*.json ./
+
+# Copy source files (for non-compiled Node.js apps)
+COPY --chown=backend:nodejs backend/src ./src
+COPY --chown=backend:nodejs backend/*.js ./
+
+# Create logs directory
+RUN mkdir -p logs && chown -R backend:nodejs logs
+
+# Switch to non-root user
+USER backend
+
+# Expose port
+EXPOSE 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:3001/health || exit 1
+
+# Production startup with init system
+CMD ["dumb-init", "npm", "start"]
+
+# Minimal production stage (for smallest image size)
+FROM node:22-alpine AS minimal
+ENV NODE_ENV=production
+
+# Install minimal runtime dependencies
+RUN apk add --no-cache dumb-init curl ca-certificates \
+    && addgroup --system --gid 1001 nodejs \
+    && adduser --system --uid 1001 --ingroup nodejs backend
+
+WORKDIR /app
+
+# Copy only production assets
+COPY --from=deps --chown=backend:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=backend:nodejs /app/prisma ./prisma
+COPY --chown=backend:nodejs backend/package*.json ./
+COPY --chown=backend:nodejs backend/src ./src
+
+# Create minimal logs directory
+RUN mkdir -p logs && chown backend:nodejs logs
+
+USER backend
+EXPOSE 3001
+
+HEALTHCHECK --interval=60s --timeout=10s --start-period=30s --retries=2 \
+    CMD curl -f http://localhost:3001/health || exit 1
+
+CMD ["dumb-init", "node", "src/index.js"]

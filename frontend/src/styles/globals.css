@@ -1,0 +1,532 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Inter font for X-like typography */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* Custom base styles */
+@layer base {
+  body {
+    @apply bg-x-background font-sans antialiased;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
+  }
+
+  /* Improved scrollbar styling */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-gray-300 dark:bg-gray-600;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-500;
+  }
+
+  /* Firefox scrollbar */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(203 213 225) rgb(241 245 249);
+  }
+
+  html.dark {
+    scrollbar-color: rgb(75 85 99) rgb(31 41 55);
+  }
+
+  /* Selection colors */
+  ::selection {
+    @apply bg-x-blue/20 text-x-text;
+  }
+
+  /* Focus styles for accessibility */
+  :focus-visible {
+    @apply outline-none ring-2 ring-x-blue ring-offset-2 ring-offset-white dark:ring-offset-gray-800;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .political-conservative {
+      @apply border-2 border-black;
+    }
+
+    .political-liberal {
+      @apply border-2 border-black;
+    }
+
+    .political-progressive {
+      @apply border-2 border-black;
+    }
+  }
+
+  /* Reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Dark mode scrollbar */
+  .dark ::-webkit-scrollbar-track {
+    @apply bg-gray-800;
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    @apply bg-gray-600;
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500;
+  }
+}
+
+/* X-like component patterns */
+@layer components {
+  /* Post component */
+  .x-post {
+    @apply cursor-pointer border-b border-x-border transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-900;
+  }
+
+  .x-post-content {
+    @apply space-y-3 p-4;
+  }
+
+  .x-post-header {
+    @apply flex items-center space-x-3;
+  }
+
+  .x-post-body {
+    @apply break-words leading-relaxed text-x-text;
+  }
+
+  .x-post-footer {
+    @apply flex items-center justify-between pt-2;
+  }
+
+  /* Button variants */
+  .x-btn-primary {
+    @apply rounded-full bg-x-blue px-6 py-2 font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-x-blue-hover hover:shadow-lg focus-visible:ring-x-blue;
+  }
+
+  .x-btn-secondary {
+    @apply rounded-full border border-x-blue px-6 py-2 font-semibold text-x-blue transition-all duration-200 hover:bg-x-blue-light focus-visible:ring-x-blue dark:hover:bg-x-blue/10;
+  }
+
+  .x-btn-ghost {
+    @apply rounded-full p-2 text-x-light-gray transition-all duration-200 hover:bg-gray-100 focus-visible:ring-gray-400 dark:hover:bg-gray-800;
+  }
+
+  /* Political alignment buttons */
+  .x-btn-conservative {
+    @apply rounded-full bg-political-conservative-500 px-6 py-2 font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-political-conservative-600 hover:shadow-lg focus-visible:ring-political-conservative-500;
+  }
+
+  .x-btn-liberal {
+    @apply rounded-full bg-political-liberal-500 px-6 py-2 font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-political-liberal-600 hover:shadow-lg focus-visible:ring-political-liberal-500;
+  }
+
+  .x-btn-progressive {
+    @apply rounded-full bg-political-progressive-500 px-6 py-2 font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-political-progressive-600 hover:shadow-lg focus-visible:ring-political-progressive-500;
+  }
+
+  /* Influence level indicators */
+  .influence-glow {
+    @apply animate-influence-glow;
+  }
+
+  .influence-minimal {
+    @apply border-influence-minimal/20 bg-influence-minimal/10 text-influence-minimal;
+  }
+
+  .influence-emerging {
+    @apply border-influence-emerging/20 bg-influence-emerging/10 text-influence-emerging;
+  }
+
+  .influence-rising {
+    @apply border-influence-rising/20 bg-influence-rising/10 text-influence-rising;
+  }
+
+  .influence-influential {
+    @apply border-influence-influential/20 bg-influence-influential/10 text-influence-influential;
+  }
+
+  .influence-viral {
+    @apply animate-political-pulse border-influence-viral/20 bg-influence-viral/10 text-influence-viral;
+  }
+
+  /* Avatar variants with political borders */
+  .avatar-conservative {
+    @apply border-2 border-political-conservative-500;
+  }
+
+  .avatar-liberal {
+    @apply border-2 border-political-liberal-500;
+  }
+
+  .avatar-progressive {
+    @apply border-2 border-political-progressive-500;
+  }
+
+  .avatar-moderate {
+    @apply border-2 border-political-moderate-500;
+  }
+
+  .avatar-glow {
+    @apply animate-pulse ring-2 ring-influence-viral ring-opacity-50;
+  }
+
+  /* Engagement action buttons */
+  .engagement-like {
+    @apply text-gray-500 transition-colors duration-200 hover:bg-engagement-like/10 hover:text-engagement-like;
+  }
+
+  .engagement-like.active {
+    @apply animate-like-burst text-engagement-like;
+  }
+
+  .engagement-repost {
+    @apply text-gray-500 transition-colors duration-200 hover:bg-engagement-repost/10 hover:text-engagement-repost;
+  }
+
+  .engagement-repost.active {
+    @apply animate-repost-spin text-engagement-repost;
+  }
+
+  .engagement-comment {
+    @apply text-gray-500 transition-colors duration-200 hover:bg-engagement-comment/10 hover:text-engagement-comment;
+  }
+
+  .engagement-share {
+    @apply text-gray-500 transition-colors duration-200 hover:bg-engagement-share/10 hover:text-engagement-share;
+  }
+
+  .engagement-bookmark {
+    @apply text-gray-500 transition-colors duration-200 hover:bg-engagement-bookmark/10 hover:text-engagement-bookmark;
+  }
+
+  .engagement-bookmark.active {
+    @apply text-engagement-bookmark;
+  }
+
+  /* Profile header */
+  .profile-header {
+    @apply relative h-48 bg-gradient-to-r from-x-blue to-x-blue-hover;
+  }
+
+  .profile-avatar {
+    @apply absolute -bottom-16 left-4 h-32 w-32 rounded-full border-4 border-white dark:border-gray-800;
+  }
+
+  .profile-info {
+    @apply px-4 pb-4 pt-20;
+  }
+
+  .profile-stats {
+    @apply flex space-x-6 text-sm text-x-text-secondary;
+  }
+
+  /* Navigation styles */
+  .nav-item {
+    @apply flex items-center space-x-3 rounded-full px-3 py-3 text-xl font-normal text-x-text transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800;
+  }
+
+  .nav-item.active {
+    @apply font-bold;
+  }
+
+  /* Sidebar components */
+  .sidebar-section {
+    @apply bg-x-surface rounded-2xl border border-x-border p-4;
+  }
+
+  .sidebar-title {
+    @apply mb-3 text-xl font-bold text-x-text;
+  }
+
+  .sidebar-item {
+    @apply flex items-center justify-between rounded-lg px-2 py-2 transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-800;
+  }
+
+  /* Timeline components */
+  .timeline-header {
+    @apply bg-x-surface/80 sticky top-0 z-10 border-b border-x-border p-4 backdrop-blur-sm;
+  }
+
+  .timeline-content {
+    @apply divide-y divide-x-border;
+  }
+
+  /* Post composer */
+  .post-composer {
+    @apply space-y-4 border-b border-x-border p-4;
+  }
+
+  .post-composer-textarea {
+    @apply w-full resize-none border-none bg-transparent text-xl placeholder-x-extra-light-gray focus:outline-none;
+  }
+
+  .post-composer-footer {
+    @apply flex items-center justify-between;
+  }
+
+  .post-composer-actions {
+    @apply flex items-center space-x-4;
+  }
+
+  /* Trending section */
+  .trending-item {
+    @apply cursor-pointer p-3 transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-800;
+  }
+
+  .trending-category {
+    @apply text-xs uppercase tracking-wide text-x-text-secondary;
+  }
+
+  .trending-topic {
+    @apply font-semibold text-x-text;
+  }
+
+  .trending-count {
+    @apply text-sm text-x-text-secondary;
+  }
+
+  /* Modal styles */
+  .modal-overlay {
+    @apply fixed inset-0 z-50 bg-black/60 backdrop-blur-sm;
+  }
+
+  .modal-content {
+    @apply bg-x-surface mx-4 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl;
+  }
+
+  /* Loading states */
+  .loading-shimmer {
+    @apply animate-pulse rounded bg-gray-200 dark:bg-gray-700;
+  }
+
+  .loading-spinner {
+    @apply animate-spin rounded-full border-2 border-gray-300 border-t-x-blue;
+  }
+
+  /* Error states */
+  .error-message {
+    @apply rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-200;
+  }
+
+  .success-message {
+    @apply rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800 dark:border-green-800 dark:bg-green-900/20 dark:text-green-200;
+  }
+
+  /* Typography improvements */
+  .text-x-display {
+    @apply text-2xl font-bold text-x-text;
+  }
+
+  .text-x-headline {
+    @apply text-xl font-semibold text-x-text;
+  }
+
+  .text-x-title {
+    @apply text-lg font-medium text-x-text;
+  }
+
+  .text-x-body {
+    @apply text-base text-x-text;
+  }
+
+  .text-x-caption {
+    @apply text-sm text-x-text-secondary;
+  }
+
+  .text-x-username {
+    @apply text-sm font-medium text-x-text-secondary;
+  }
+
+  .text-x-timestamp {
+    @apply text-sm text-x-extra-light-gray;
+  }
+}
+
+/* Utility classes */
+@layer utilities {
+  /* Political gradient backgrounds */
+  .bg-political-gradient-conservative {
+    background: linear-gradient(135deg, #dc2626 0%, #fca5a5 100%);
+  }
+
+  .bg-political-gradient-liberal {
+    background: linear-gradient(135deg, #2563eb 0%, #93c5fd 100%);
+  }
+
+  .bg-political-gradient-progressive {
+    background: linear-gradient(135deg, #7c3aed 0%, #c4b5fd 100%);
+  }
+
+  /* Influence gradient backgrounds */
+  .bg-influence-gradient-viral {
+    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+  }
+
+  .bg-influence-gradient-influential {
+    background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+  }
+
+  /* Text gradients */
+  .text-gradient-x {
+    background: linear-gradient(135deg, #1da1f2 0%, #1570a6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-political {
+    background: linear-gradient(135deg, #dc2626 0%, #2563eb 50%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Safe area utilities for mobile */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Backdrop blur utilities */
+  .backdrop-blur-x {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* Custom shadows */
+  .shadow-x-hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .shadow-political {
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5);
+  }
+
+  .shadow-influence {
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
+  }
+
+  /* Glass morphism */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Loading states */
+  .animate-skeleton {
+    animation: skeleton 1.5s ease-in-out infinite;
+  }
+
+  @keyframes skeleton {
+    0% {
+      background-position: -200px 0;
+    }
+    100% {
+      background-position: calc(200px + 100%) 0;
+    }
+  }
+
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    background-size: 200px 100%;
+    background-repeat: no-repeat;
+  }
+
+  .skeleton-dark {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    background-size: 200px 100%;
+    background-repeat: no-repeat;
+  }
+
+  /* Hide scrollbar */
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Aspect ratio utilities */
+  .aspect-x-post {
+    aspect-ratio: 16 / 9;
+  }
+
+  .aspect-x-profile {
+    aspect-ratio: 3 / 1;
+  }
+
+  .aspect-x-avatar {
+    aspect-ratio: 1 / 1;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  body {
+    color: black !important;
+    background: white !important;
+  }
+
+  .x-post {
+    border: 1px solid #ccc !important;
+    margin: 1rem 0 !important;
+    page-break-inside: avoid;
+  }
+}
