@@ -11,13 +11,13 @@ export function cn(...inputs: ClassValue[]) {
 /**
  * Political alignment types and utilities
  */
-export type PoliticalAlignment =
+export type PoliticalAlignmentPosition =
   | 'conservative'
   | 'liberal'
   | 'progressive'
   | 'moderate'
   | 'libertarian'
-  | 'green';
+  | 'independent';
 
 export type InfluenceLevel =
   | 'minimal'
@@ -37,7 +37,7 @@ export type EngagementType =
  * Get political alignment color classes
  */
 export function getPoliticalColorClasses(
-  alignment: PoliticalAlignment,
+  alignment: PoliticalAlignmentPosition,
   shade = 500
 ) {
   const colorMap = {
@@ -46,7 +46,7 @@ export function getPoliticalColorClasses(
     progressive: `political-progressive-${shade}`,
     moderate: `political-moderate-${shade}`,
     libertarian: `political-libertarian-${shade}`,
-    green: `political-green-${shade}`,
+    independent: `political-green-${shade}`,
   };
 
   return colorMap[alignment] || 'gray-500';
@@ -56,7 +56,7 @@ export function getPoliticalColorClasses(
  * Get political alignment text color for good contrast
  */
 export function getPoliticalTextColor(
-  alignment: PoliticalAlignment,
+  alignment: PoliticalAlignmentPosition,
   isBackground = false
 ) {
   if (isBackground) {
@@ -66,7 +66,7 @@ export function getPoliticalTextColor(
       progressive: 'text-political-progressive-50',
       moderate: 'text-political-moderate-50',
       libertarian: 'text-political-libertarian-50',
-      green: 'text-political-green-50',
+      independent: 'text-political-green-50',
     };
     return textColorMap[alignment] || 'text-white';
   }
@@ -77,7 +77,7 @@ export function getPoliticalTextColor(
     progressive: 'text-political-progressive-600',
     moderate: 'text-political-moderate-600',
     libertarian: 'text-political-libertarian-600',
-    green: 'text-political-green-600',
+    independent: 'text-political-green-600',
   };
 
   return textColorMap[alignment] || 'text-gray-600';
@@ -131,14 +131,14 @@ export function getInfluenceDisplayName(level: InfluenceLevel): string {
 /**
  * Get political alignment display name
  */
-export function getPoliticalDisplayName(alignment: PoliticalAlignment): string {
+export function getPoliticalDisplayName(alignment: PoliticalAlignmentPosition): string {
   const displayNames = {
     conservative: 'Conservative',
     liberal: 'Liberal',
     progressive: 'Progressive',
     moderate: 'Moderate',
     libertarian: 'Libertarian',
-    green: 'Green',
+    independent: 'Independent',
   };
 
   return displayNames[alignment] || 'Independent';
@@ -216,7 +216,7 @@ export function getComponentVariants() {
         'border border-x-blue text-x-blue hover:bg-x-blue-light font-semibold py-2 px-6 rounded-full transition-all duration-200',
       ghost:
         'text-x-light-gray hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded-full transition-all duration-200',
-      political: (alignment: PoliticalAlignment) =>
+      political: (alignment: PoliticalAlignmentPosition) =>
         cn(
           'font-semibold py-2 px-6 rounded-full transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5',
           `bg-political-${alignment}-500 hover:bg-political-${alignment}-600 text-white`

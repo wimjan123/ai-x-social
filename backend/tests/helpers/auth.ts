@@ -211,3 +211,10 @@ export const MOCK_USERS = {
     bio: 'Activist for social change'
   }
 } as const;
+
+export const cleanupTestData = async (): Promise<void> => {
+  // Mock cleanup implementation for contract testing
+  // In real implementation, this would clean up test data from database
+  // For now, this is a no-op since we're using mock data
+  return Promise.resolve();
+};

@@ -44,3 +44,31 @@ if (config.nodeEnv !== 'production') {
     )
   }));
 }
+
+// Create request logger middleware
+export function createRequestLogger() {
+  return (req: any, res: any, next: any) => {
+    const start = Date.now();
+
+    res.on('finish', () => {
+      const duration = Date.now() - start;
+      const logData = {
+        method: req.method,
+        url: req.url,
+        statusCode: res.statusCode,
+        duration,
+        userAgent: req.get('User-Agent'),
+        ip: req.ip,
+        userId: req.user?.id,
+      };
+
+      if (res.statusCode >= 400) {
+        logger.warn('HTTP Request', logData);
+      } else {
+        logger.info('HTTP Request', logData);
+      }
+    });
+
+    next();
+  };
+}

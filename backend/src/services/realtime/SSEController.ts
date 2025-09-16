@@ -2,6 +2,18 @@
 // Implements T053a: SSE for posts, reactions, trends, news
 
 import { Request, Response } from 'express';
+
+// Extend Express Request interface to include user
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        [key: string]: any;
+      };
+    }
+  }
+}
 import { v4 as uuidv4 } from 'uuid';
 import {
   SSEConnection,
@@ -44,11 +56,11 @@ export class SSEController {
   }
 
   private setupEventSubscriptions(): void {
-    this.eventPublisher.subscribe('post_created', this.handlePostCreated.bind(this));
-    this.eventPublisher.subscribe('post_reaction', this.handlePostReaction.bind(this));
-    this.eventPublisher.subscribe('trend_update', this.handleTrendUpdate.bind(this));
-    this.eventPublisher.subscribe('news_item', this.handleNewsItem.bind(this));
-    this.eventPublisher.subscribe('ai_response', this.handleAIResponse.bind(this));
+    this.eventPublisher.subscribe('posts', this.handlePostCreated.bind(this));
+    this.eventPublisher.subscribe('reactions', this.handlePostReaction.bind(this));
+    this.eventPublisher.subscribe('trends', this.handleTrendUpdate.bind(this));
+    this.eventPublisher.subscribe('news', this.handleNewsItem.bind(this));
+    this.eventPublisher.subscribe('ai_responses', this.handleAIResponse.bind(this));
   }
 
   /**
@@ -135,7 +147,7 @@ export class SSEController {
     for (const connection of relevantConnections) {
       if (await this.shouldSendToUser(connection, event)) {
         this.sendEvent(connection.response, {
-          type: 'post_created',
+          type: 'posts',
           id: event.data.postId,
           data: {
             post: event.data.post,
@@ -157,7 +169,7 @@ export class SSEController {
       // Only send if user is viewing the post or is the author
       if (await this.isRelevantReaction(connection, event)) {
         this.sendEvent(connection.response, {
-          type: 'post_reaction',
+          type: 'reactions',
           id: event.data.postId,
           data: {
             postId: event.data.postId,
@@ -181,7 +193,7 @@ export class SSEController {
       // Filter trends by user's region preferences
       if (await this.isTrendRelevant(connection, event.data.trend)) {
         this.sendEvent(connection.response, {
-          type: 'trend_update',
+          type: 'trends',
           data: {
             trend: event.data.trend,
             action: event.data.action,
@@ -201,7 +213,7 @@ export class SSEController {
     for (const connection of relevantConnections) {
       if (await this.isNewsRelevant(connection, event)) {
         this.sendEvent(connection.response, {
-          type: 'news_item',
+          type: 'news',
           data: {
             newsItem: event.data.newsItem,
             relevanceScore: event.data.relevanceScore,
@@ -222,7 +234,7 @@ export class SSEController {
     for (const connection of relevantConnections) {
       if (await this.shouldSendToUser(connection, event)) {
         this.sendEvent(connection.response, {
-          type: 'ai_response',
+          type: 'ai_responses',
           id: event.data.responseId,
           data: {
             post: event.data.post,
@@ -412,12 +424,12 @@ export class SSEController {
     const now = new Date();
     const staleTimeout = 5 * 60 * 1000; // 5 minutes
 
-    for (const [connectionId, connection] of this.connections) {
+    Array.from(this.connections.entries()).forEach(([connectionId, connection]) => {
       if (now.getTime() - connection.lastActivity.getTime() > staleTimeout) {
         console.log(`Cleaning up stale SSE connection: ${connectionId}`);
         this.handleDisconnect(connectionId);
       }
-    }
+    });
   }
 
   // Public API methods
@@ -457,19 +469,19 @@ export class SSEController {
 
     // Route to appropriate handler based on event type
     switch (eventType) {
-      case 'post_created':
+      case 'posts':
         await this.handlePostCreated(event as PostCreatedEvent);
         break;
-      case 'post_reaction':
+      case 'reactions':
         await this.handlePostReaction(event as PostReactionEvent);
         break;
-      case 'trend_update':
+      case 'trends':
         await this.handleTrendUpdate(event as TrendUpdateEvent);
         break;
-      case 'news_item':
+      case 'news':
         await this.handleNewsItem(event as NewsItemEvent);
         break;
-      case 'ai_response':
+      case 'ai_responses':
         await this.handleAIResponse(event as AIResponseEvent);
         break;
       default:
@@ -489,15 +501,15 @@ export class SSEController {
     };
 
     // Count anonymous connections and subscription breakdown
-    for (const connection of this.connections.values()) {
+    Array.from(this.connections.values()).forEach(connection => {
       if (!connection.userId) {
         stats.anonymousConnections++;
       }
 
-      for (const sub of connection.subscriptions) {
+      connection.subscriptions.forEach(sub => {
         stats.subscriptionBreakdown[sub] = (stats.subscriptionBreakdown[sub] || 0) + 1;
-      }
-    }
+      });
+    });
 
     return stats;
   }
@@ -511,8 +523,8 @@ export class SSEController {
     }
 
     // Close all connections
-    for (const [connectionId] of this.connections) {
+    Array.from(this.connections.keys()).forEach(connectionId => {
       this.handleDisconnect(connectionId);
-    }
+    });
   }
 }

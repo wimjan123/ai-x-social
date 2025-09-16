@@ -133,7 +133,7 @@ export class RateLimiter {
     const now = Date.now();
     const cutoff = now - (this.config.windowMs * 2); // Keep for 2x window size
 
-    for (const [connectionId, entry] of this.limits.entries()) {
+    Array.from(this.limits.entries()).forEach(([connectionId, entry]) => {
       // Remove entries that haven't been used recently
       if (entry.lastReset < cutoff && entry.requests.length === 0) {
         this.limits.delete(connectionId);
@@ -148,7 +148,7 @@ export class RateLimiter {
           timestamp => now - timestamp < this.config.windowMs
         );
       }
-    }
+    });
   }
 
   /**
@@ -163,7 +163,7 @@ export class RateLimiter {
     let totalRequests = 0;
     let rateLimitedCount = 0;
 
-    for (const [connectionId, entry] of this.limits.entries()) {
+    Array.from(this.limits.entries()).forEach(([connectionId, entry]) => {
       // Update requests within window
       entry.requests = entry.requests.filter(
         timestamp => now - timestamp < this.config.windowMs
@@ -174,7 +174,7 @@ export class RateLimiter {
       if (entry.requests.length >= this.config.maxRequests) {
         rateLimitedCount++;
       }
-    }
+    });
 
     return {
       totalConnections: this.limits.size,

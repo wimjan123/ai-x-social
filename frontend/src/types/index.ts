@@ -22,17 +22,24 @@ export interface User {
 export interface AIPersona {
   id: string;
   name: string;
+  displayName: string;
   username: string;
   bio: string;
   avatarUrl: string;
+  verified: boolean;
+  followersCount: number;
+  followingCount: number;
+  postsCount: number;
   politicalAlignment: PoliticalAlignment;
   personality: PersonalityTraits;
   responseStyle: ResponseStyle;
   topicExpertise: string[];
   influenceMetrics: InfluenceMetrics;
+  influenceScore: number;
   isActive: boolean;
   lastActiveAt: Date;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Post {
@@ -218,8 +225,55 @@ export interface AppState {
   error: string | null;
 }
 
+// Settings types
+export interface UserSettings {
+  id: string;
+  userId: string;
+  newsRegion: string;
+  newsCategories: string[];
+  newsLanguages: string[];
+  aiChatterLevel: number;
+  aiPersonalities: string[];
+  aiResponseTone: 'PROFESSIONAL' | 'CASUAL' | 'HUMOROUS' | 'SERIOUS' | 'SARCASTIC' | 'EMPATHETIC';
+  emailNotifications: boolean;
+  pushNotifications: boolean;
+  notificationCategories: ('MENTIONS' | 'REPLIES' | 'LIKES' | 'REPOSTS' | 'FOLLOWERS' | 'NEWS_ALERTS' | 'PERSONA_INTERACTIONS')[];
+  profileVisibility: 'PUBLIC' | 'FOLLOWERS_ONLY' | 'PRIVATE';
+  allowPersonaInteractions: boolean;
+  allowDataForAI: boolean;
+  theme: 'LIGHT' | 'DARK' | 'AUTO';
+  language: string;
+  timezone: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SettingsUpdateForm {
+  newsRegion?: string;
+  newsCategories?: string[];
+  newsLanguages?: string[];
+  aiChatterLevel?: number;
+  aiPersonalities?: string[];
+  aiResponseTone?: 'PROFESSIONAL' | 'CASUAL' | 'HUMOROUS' | 'SERIOUS' | 'SARCASTIC' | 'EMPATHETIC';
+  emailNotifications?: boolean;
+  pushNotifications?: boolean;
+  notificationCategories?: ('MENTIONS' | 'REPLIES' | 'LIKES' | 'REPOSTS' | 'FOLLOWERS' | 'NEWS_ALERTS' | 'PERSONA_INTERACTIONS')[];
+  profileVisibility?: 'PUBLIC' | 'FOLLOWERS_ONLY' | 'PRIVATE';
+  allowPersonaInteractions?: boolean;
+  allowDataForAI?: boolean;
+  theme?: 'LIGHT' | 'DARK' | 'AUTO';
+  language?: string;
+  timezone?: string;
+}
+
+export interface AIConfigForm {
+  customAIApiKey?: string;
+  customAIBaseUrl?: string;
+}
+
 // Utility types
 export type PostType = 'original' | 'reply' | 'repost' | 'quote';
 export type UserType = 'human' | 'ai';
 export type NotificationPreference = 'all' | 'following' | 'mentions' | 'none';
 export type PrivacySetting = 'public' | 'followers' | 'private';
+export type EngagementType = 'like' | 'repost' | 'comment' | 'share' | 'bookmark';

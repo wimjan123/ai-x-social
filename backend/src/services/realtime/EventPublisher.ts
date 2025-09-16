@@ -1,7 +1,7 @@
 // Event Publisher with Redis pub/sub for cross-instance communication
 // Implements T053a: Redis-based event distribution
 
-import { Redis } from 'redis';
+import { createClient, RedisClientType } from 'redis';
 import { v4 as uuidv4 } from 'uuid';
 import {
   RealtimeEvent,
@@ -18,19 +18,13 @@ import {
 import { Post, UserProfile, Persona, Trend, NewsItem } from '../../generated/prisma';
 
 export class EventPublisher {
-  private redis: Redis;
-  private subscriber: Redis;
+  private redis: RedisClientType;
+  private subscriber: RedisClientType;
   private subscribers: Map<string, EventHandler[]> = new Map();
   private isInitialized = false;
 
   constructor(redisUrl: string) {
-    this.redis = new Redis(redisUrl, {
-      retryDelayOnFailover: 100,
-      enableReadyCheck: false,
-      maxRetriesPerRequest: null,
-      lazyConnect: true
-    });
-
+    this.redis = createClient({ url: redisUrl });
     this.subscriber = this.redis.duplicate();
     this.setupRedisSubscriptions();
   }
@@ -135,7 +129,7 @@ export class EventPublisher {
     // Subscribe to all event channels when connected
     this.subscriber.on('ready', async () => {
       try {
-        await this.subscriber.psubscribe('events:*');
+        await this.subscriber.pSubscribe('events:*');
         console.log('EventPublisher subscribed to all event channels');
       } catch (error) {
         console.error('Failed to subscribe to Redis channels:', error);
@@ -324,9 +318,9 @@ export class EventPublisher {
   getSubscriptionStats(): Record<string, number> {
     const stats: Record<string, number> = {};
 
-    for (const [eventType, handlers] of this.subscribers) {
+    Array.from(this.subscribers.entries()).forEach(([eventType, handlers]) => {
       stats[eventType] = handlers.length;
-    }
+    });
 
     return stats;
   }
