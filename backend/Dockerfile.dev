@@ -1,0 +1,163 @@
+# AI Social Media Platform - Backend Development Dockerfile
+# Multi-stage Docker build for Node.js 22 + TypeScript + Prisma
+# Optimized for development with hot reloading
+
+# =============================================================================
+# Base Stage - Common dependencies
+# =============================================================================
+FROM node:22-alpine AS base
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies for native modules
+RUN apk add --no-cache \
+    libc6-compat \
+    python3 \
+    make \
+    g++ \
+    curl \
+    git
+
+# Create non-root user for security
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 --ingroup nodejs nextjs
+
+# =============================================================================
+# Dependencies Stage - Install and cache dependencies
+# =============================================================================
+FROM base AS deps
+
+# Copy package files
+COPY package*.json ./
+COPY tsconfig.json ./
+
+# Install dependencies with clean npm cache
+RUN npm ci --only=production && npm cache clean --force
+
+# Install development dependencies in separate layer
+RUN npm ci && npm cache clean --force
+
+# =============================================================================
+# Development Stage - Hot reloading setup
+# =============================================================================
+FROM base AS development
+
+# Copy installed dependencies from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+
+# Copy source code
+COPY . .
+
+# Set environment variables for development
+ENV NODE_ENV=development
+ENV PORT=3001
+ENV PRISMA_SCHEMA_PATH=/app/prisma/schema.prisma
+
+# Generate Prisma client
+RUN npx prisma generate
+
+# Create logs directory
+RUN mkdir -p logs && chown -R nodejs:nodejs logs
+
+# Create uploads directory
+RUN mkdir -p uploads && chown -R nodejs:nodejs uploads
+
+# Switch to non-root user
+USER nodejs
+
+# Expose port
+EXPOSE 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:3001/health || exit 1
+
+# Development command with hot reloading
+CMD ["npm", "run", "dev"]
+
+# =============================================================================
+# Build Stage - TypeScript compilation
+# =============================================================================
+FROM base AS builder
+
+# Copy dependencies and source code
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Set environment for build
+ENV NODE_ENV=production
+
+# Generate Prisma client
+RUN npx prisma generate
+
+# Build TypeScript to JavaScript
+RUN npm run build
+
+# =============================================================================
+# Production Stage - Optimized runtime
+# =============================================================================
+FROM node:22-alpine AS production
+
+# Install system dependencies
+RUN apk add --no-cache \
+    libc6-compat \
+    curl \
+    dumb-init
+
+# Create user and directories
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 --ingroup nodejs nodejs
+
+WORKDIR /app
+
+# Copy production dependencies
+COPY --from=deps --chown=nodejs:nodejs /app/node_modules ./node_modules
+
+# Copy built application
+COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
+COPY --from=builder --chown=nodejs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
+
+# Create runtime directories
+RUN mkdir -p logs uploads && chown -R nodejs:nodejs logs uploads
+
+# Set production environment
+ENV NODE_ENV=production
+ENV PORT=3001
+
+# Switch to non-root user
+USER nodejs
+
+# Expose port
+EXPOSE 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=15s --start-period=120s --retries=3 \
+    CMD curl -f http://localhost:3001/health || exit 1
+
+# Use dumb-init for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+
+# Production command
+CMD ["node", "dist/index.js"]
+
+# =============================================================================
+# Docker Build Arguments and Labels
+# =============================================================================
+
+# Build arguments
+ARG BUILD_DATE
+ARG VCS_REF
+ARG VERSION
+
+# Metadata labels
+LABEL org.opencontainers.image.created=$BUILD_DATE \
+      org.opencontainers.image.url="https://github.com/ai-x-social/ai-x-social" \
+      org.opencontainers.image.source="https://github.com/ai-x-social/ai-x-social" \
+      org.opencontainers.image.version=$VERSION \
+      org.opencontainers.image.revision=$VCS_REF \
+      org.opencontainers.image.vendor="AI X Social Team" \
+      org.opencontainers.image.title="AI Social Media Platform - Backend" \
+      org.opencontainers.image.description="Node.js backend API for AI-powered social media platform" \
+      org.opencontainers.image.licenses="MIT"

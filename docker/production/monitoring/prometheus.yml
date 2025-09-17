@@ -1,0 +1,106 @@
+# Prometheus Configuration for AI Social Media Platform
+# Monitors all services with proper scraping intervals and alerting rules
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'ai-social-production'
+    environment: 'production'
+
+# Alerting configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []  # Add Alertmanager targets if available
+
+# Load alerting rules
+rule_files:
+  - "alerts/*.yml"
+
+# Scrape configuration
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 30s
+    metrics_path: /metrics
+
+  # Node Exporter for system metrics (if available)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 30s
+    metrics_path: /metrics
+
+  # AI Social Backend API
+  - job_name: 'ai-social-backend'
+    static_configs:
+      - targets: ['backend:3001']
+    scrape_interval: 15s
+    metrics_path: /metrics
+    honor_labels: true
+    params:
+      format: ['prometheus']
+
+  # AI Social Frontend (Next.js)
+  - job_name: 'ai-social-frontend'
+    static_configs:
+      - targets: ['frontend:3000']
+    scrape_interval: 30s
+    metrics_path: /api/metrics
+    honor_labels: true
+
+  # PostgreSQL metrics (if postgres_exporter is available)
+  - job_name: 'postgresql'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    scrape_interval: 30s
+    metrics_path: /metrics
+
+  # Redis metrics (if redis_exporter is available)
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    scrape_interval: 30s
+    metrics_path: /metrics
+
+  # Nginx metrics (if nginx-prometheus-exporter is available)
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx-exporter:9113']
+    scrape_interval: 30s
+    metrics_path: /metrics
+
+  # Docker metrics (if cAdvisor is available)
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    scrape_interval: 30s
+    metrics_path: /metrics
+
+  # Health check endpoints
+  - job_name: 'health-checks'
+    static_configs:
+      - targets:
+          - 'backend:3001'
+          - 'frontend:3000'
+          - 'nginx:80'
+    scrape_interval: 10s
+    metrics_path: /health
+    params:
+      format: ['prometheus']
+
+# Remote write configuration (for external monitoring services)
+# remote_write:
+#   - url: "https://your-remote-prometheus-endpoint/api/v1/write"
+#     basic_auth:
+#       username: "your-username"
+#       password: "your-password"
+
+# Storage configuration
+storage:
+  tsdb:
+    retention.time: 15d
+    retention.size: 10GB

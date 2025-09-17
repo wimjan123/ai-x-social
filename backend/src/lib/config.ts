@@ -4,7 +4,7 @@ const configSchema = z.object({
   // Server
   port: z.coerce.number().default(3001),
   nodeEnv: z.enum(['development', 'test', 'production']).default('development'),
-  corsOrigin: z.string().default('http://localhost:3000'),
+  corsOrigin: z.string().default('http://localhost:3000,http://localhost:3001'),
 
   // Database
   databaseUrl: z.string(),
