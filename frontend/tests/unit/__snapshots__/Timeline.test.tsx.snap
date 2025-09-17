@@ -1,0 +1,381 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Timeline (NewsFeed) Snapshots matches snapshot for default render 1`] = `
+<div
+  class="space-y-6"
+>
+  <div
+    class="space-y-4"
+  >
+    <div
+      class="flex items-center justify-between"
+    >
+      <h2
+        class="text-2xl font-bold text-x-text dark:text-x-text-dark"
+      >
+        Latest News
+      </h2>
+      <button
+        class="flex items-center space-x-2"
+        variant="ghost"
+      >
+        <svg
+          class="lucide lucide-refresh-cw w-4 h-4"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"
+          />
+          <path
+            d="M21 3v5h-5"
+          />
+          <path
+            d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"
+          />
+          <path
+            d="M8 16H3v5"
+          />
+        </svg>
+        <span>
+          Refresh
+        </span>
+      </button>
+    </div>
+    <input
+      data-testid="news-search"
+      placeholder="Search news..."
+    />
+    <div
+      data-testid="news-filters"
+    >
+      <select
+        data-testid="category-filter"
+      >
+        <option
+          value=""
+        >
+          All Categories
+        </option>
+        <option
+          value="politics"
+        >
+          Politics
+        </option>
+        <option
+          value="technology"
+        >
+          Technology
+        </option>
+      </select>
+    </div>
+  </div>
+  <div
+    class="grid gap-6 lg:grid-cols-4"
+  >
+    <div
+      class="lg:col-span-3"
+    >
+      <div
+        class="space-y-6 animate-fade-in"
+      >
+        <div
+          class="space-y-4"
+        >
+          <div
+            class="transition-all duration-200 animate-fade-in"
+            data-testid="news-card-news-1"
+            style="animation-delay: 0ms;"
+          >
+            <h3>
+              Breaking Political News
+            </h3>
+            <p>
+              Important political development
+            </p>
+            <button>
+              Persona Reaction
+            </button>
+          </div>
+          <div
+            class="transition-all duration-200 animate-fade-in"
+            data-testid="news-card-news-2"
+            style="animation-delay: 100ms;"
+          >
+            <h3>
+              Technology Update
+            </h3>
+            <p>
+              Latest tech developments
+            </p>
+            <button>
+              Persona Reaction
+            </button>
+          </div>
+          <div
+            class="transition-all duration-200 animate-fade-in"
+            data-testid="news-card-news-3"
+            style="animation-delay: 200ms;"
+          >
+            <h3>
+              Economic Report
+            </h3>
+            <p>
+              Market analysis and trends
+            </p>
+            <button>
+              Persona Reaction
+            </button>
+          </div>
+        </div>
+        <div
+          class="text-center py-8"
+        >
+          <p
+            class="text-x-text-secondary dark:text-x-text-secondary-dark"
+          >
+            You're all caught up! Check back later for more news.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      class="space-y-6"
+    >
+      <div
+        data-testid="trending-news"
+      >
+        <h3>
+          Trending News
+        </h3>
+        <button>
+          Trending Article
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="text-center pt-6 border-t border-x-border"
+  >
+    <p
+      class="text-sm text-x-text-secondary dark:text-x-text-secondary-dark"
+    >
+      Showing 
+      3
+       of 
+      3
+       articles
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Timeline (NewsFeed) Snapshots matches snapshot for empty state 1`] = `
+<div
+  class="space-y-6"
+>
+  <div
+    class="space-y-4"
+  >
+    <div
+      class="flex items-center justify-between"
+    >
+      <h2
+        class="text-2xl font-bold text-x-text dark:text-x-text-dark"
+      >
+        Latest News
+      </h2>
+      <button
+        class="flex items-center space-x-2"
+        variant="ghost"
+      >
+        <svg
+          class="lucide lucide-refresh-cw w-4 h-4"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"
+          />
+          <path
+            d="M21 3v5h-5"
+          />
+          <path
+            d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"
+          />
+          <path
+            d="M8 16H3v5"
+          />
+        </svg>
+        <span>
+          Refresh
+        </span>
+      </button>
+    </div>
+    <input
+      data-testid="news-search"
+      placeholder="Search news..."
+    />
+    <div
+      data-testid="news-filters"
+    >
+      <select
+        data-testid="category-filter"
+      >
+        <option
+          value=""
+        >
+          All Categories
+        </option>
+        <option
+          value="politics"
+        >
+          Politics
+        </option>
+        <option
+          value="technology"
+        >
+          Technology
+        </option>
+      </select>
+    </div>
+  </div>
+  <div
+    class="grid gap-6 lg:grid-cols-4"
+  >
+    <div
+      class="lg:col-span-3"
+    >
+      <div
+        class="text-center py-12"
+      >
+        <p
+          class="text-x-text-secondary dark:text-x-text-secondary-dark"
+        >
+          No news articles found. Try adjusting your filters.
+        </p>
+      </div>
+    </div>
+    <div
+      class="space-y-6"
+    >
+      <div
+        data-testid="trending-news"
+      >
+        <h3>
+          Trending News
+        </h3>
+        <button>
+          Trending Article
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Timeline (NewsFeed) Snapshots matches snapshot for error state 1`] = `
+<div
+  class="flex items-center justify-center py-12"
+>
+  <div
+    class="text-center space-y-4 max-w-md"
+  >
+    <svg
+      class="lucide lucide-circle-alert w-12 h-12 text-red-500 mx-auto"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="10"
+      />
+      <line
+        x1="12"
+        x2="12"
+        y1="8"
+        y2="12"
+      />
+      <line
+        x1="12"
+        x2="12.01"
+        y1="16"
+        y2="16"
+      />
+    </svg>
+    <div
+      class="space-y-2"
+    >
+      <h3
+        class="text-lg font-semibold text-x-text dark:text-x-text-dark"
+      >
+        Failed to Load News
+      </h3>
+      <p
+        class="text-x-text-secondary dark:text-x-text-secondary-dark"
+      >
+        Test error
+      </p>
+    </div>
+    <button
+      class="mt-4"
+    >
+      Try Again
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Timeline (NewsFeed) Snapshots matches snapshot for loading state 1`] = `
+<div
+  class="flex items-center justify-center py-12"
+>
+  <div
+    class="text-center space-y-4"
+  >
+    <svg
+      class="lucide lucide-loader-circle w-8 h-8 animate-spin text-x-blue mx-auto"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M21 12a9 9 0 1 1-6.219-8.56"
+      />
+    </svg>
+    <p
+      class="text-x-text-secondary dark:text-x-text-secondary-dark"
+    >
+      Loading latest news...
+    </p>
+  </div>
+</div>
+`;

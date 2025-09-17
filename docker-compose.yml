@@ -81,7 +81,7 @@ services:
       DATABASE_URL: postgresql://ai_social_user:ai_social_dev_password@postgres:5432/ai_social_db
       REDIS_URL: redis://redis:6379
       JWT_SECRET: dev-jwt-secret-change-in-production
-      CORS_ORIGIN: http://localhost:3000
+      CORS_ORIGIN: https://x.polibase.nl
       # AI Provider Keys (loaded from .env.docker)
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
@@ -94,8 +94,6 @@ services:
       LOG_LEVEL: debug
       ENABLE_API_DOCS: true
       PRISMA_SCHEMA_PATH: /app/prisma/schema.prisma
-    ports:
-      - "3001:3001"
     volumes:
       - ./backend:/app
       - /app/node_modules
@@ -103,18 +101,26 @@ services:
       - ./backend/logs:/app/logs
     networks:
       - ai-social-network
+      - traefik_traefik-network
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3001/health || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:3001/api/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 60s
-    command: npm run dev
+    command: node simple-backend.js
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ai-social-api.rule=Host(`x.polibase.nl`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.ai-social-api.entrypoints=websecure"
+      - "traefik.http.routers.ai-social-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.ai-social-api.loadbalancer.server.port=3001"
+      - "traefik.docker.network=traefik_traefik-network"
     logging:
       driver: "json-file"
       options:
@@ -131,9 +137,9 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: development
-      NEXT_PUBLIC_API_URL: http://localhost:3001
-      NEXT_PUBLIC_WS_URL: ws://localhost:3001
-      NEXTAUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_API_URL: https://x.polibase.nl/api
+      NEXT_PUBLIC_WS_URL: wss://x.polibase.nl/api
+      NEXTAUTH_URL: https://x.polibase.nl
       NEXTAUTH_SECRET: dev-nextauth-secret-change-in-production
       DATABASE_URL: postgresql://ai_social_user:ai_social_dev_password@postgres:5432/ai_social_db
       # Next.js 15 specific settings
@@ -142,8 +148,6 @@ services:
       # Development optimizations
       WATCHPACK_POLLING: true
       CHOKIDAR_USEPOLLING: true
-    ports:
-      - "3000:3000"
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -151,6 +155,7 @@ services:
       - /app/.cache
     networks:
       - ai-social-network
+      - traefik_traefik-network
     depends_on:
       - backend
     healthcheck:
@@ -160,6 +165,14 @@ services:
       retries: 3
       start_period: 60s
     command: npm run dev
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ai-social-frontend.rule=Host(`x.polibase.nl`)"
+      - "traefik.http.routers.ai-social-frontend.entrypoints=websecure"
+      - "traefik.http.routers.ai-social-frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.ai-social-frontend.loadbalancer.server.port=3000"
+      - "traefik.docker.network=traefik_traefik-network"
+      - "traefik.http.routers.ai-social-frontend.priority=1"
     logging:
       driver: "json-file"
       options:
@@ -234,3 +247,5 @@ networks:
     ipam:
       config:
         - subnet: 172.20.0.0/16
+  traefik_traefik-network:
+    external: true

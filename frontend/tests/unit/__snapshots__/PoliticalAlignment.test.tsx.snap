@@ -1,0 +1,1259 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PoliticalAlignmentSelector Snapshots matches snapshot for default state 1`] = `
+<div
+  class="css-1arpkhw"
+>
+  <div
+    class="chakra-stack css-42ki38"
+  >
+    <div
+      class="css-0"
+    >
+      <p
+        class="chakra-text flex items-center gap-2 css-l4b12c"
+      >
+        <div
+          data-testid="flag-icon"
+          style="width: 20px; height: 20px;"
+        />
+        Political Alignment
+      </p>
+      <p
+        class="chakra-text css-89mcmc"
+      >
+        Choose your political position and customize your profile
+      </p>
+    </div>
+    <div
+      class="chakra-form-control css-1kxonj9"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-1yjwtn"
+        for="field-«rlm»"
+        id="field-«rlm»-label"
+      >
+        Political Position
+      </label>
+      <div
+        class="css-1kqsan7"
+      >
+        <button
+          class="chakra-button 
+ transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg
+ 
+ 
+ css-419imf"
+          type="button"
+        >
+          <div
+            class="chakra-stack css-ldoqu4"
+          >
+            <div
+              class="text-political-conservative-500"
+              data-testid="flag-icon"
+              style="width: 24px; height: 24px;"
+            />
+            <p
+              class="chakra-text css-1solopj"
+            >
+              Conservative
+            </p>
+          </div>
+        </button>
+        <button
+          class="chakra-button 
+ transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg
+ 
+ 
+ css-1flsgnm"
+          type="button"
+        >
+          <div
+            class="chakra-stack css-ldoqu4"
+          >
+            <div
+              class="text-political-liberal-500"
+              data-testid="scale-icon"
+              style="width: 24px; height: 24px;"
+            />
+            <p
+              class="chakra-text css-1solopj"
+            >
+              Liberal
+            </p>
+          </div>
+        </button>
+        <button
+          class="chakra-button 
+ transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg
+ 
+ 
+ css-q87w4i"
+          type="button"
+        >
+          <div
+            class="chakra-stack css-ldoqu4"
+          >
+            <div
+              class="text-political-progressive-500"
+              data-testid="trending-up-icon"
+              style="width: 24px; height: 24px;"
+            />
+            <p
+              class="chakra-text css-1solopj"
+            >
+              Progressive
+            </p>
+          </div>
+        </button>
+        <button
+          class="chakra-button 
+ transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg
+ 
+ 
+ css-971eki"
+          type="button"
+        >
+          <div
+            class="chakra-stack css-ldoqu4"
+          >
+            <div
+              class="text-political-libertarian-500"
+              data-testid="users-icon"
+              style="width: 24px; height: 24px;"
+            />
+            <p
+              class="chakra-text css-1solopj"
+            >
+              Libertarian
+            </p>
+          </div>
+        </button>
+        <button
+          class="chakra-button 
+ transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg
+ ring-2 ring-opacity-50 political-moderate-500
+ bg-gradient-to-r from-cyan-400 to-cyan-600
+ css-wua0xi"
+          type="button"
+        >
+          <div
+            class="chakra-stack css-ldoqu4"
+          >
+            <div
+              class="text-political-moderate-500"
+              data-testid="heart-icon"
+              style="width: 24px; height: 24px;"
+            />
+            <p
+              class="chakra-text css-qs00kd"
+            >
+              Independent
+            </p>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div
+      class="chakra-form-control css-1kxonj9"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-1yjwtn"
+        for="field-«rm1»"
+        id="field-«rm1»-label"
+      >
+        Political Intensity
+        <span
+          class="chakra-badge css-p9xwd1"
+        >
+          5
+          /10
+        </span>
+      </label>
+      <div
+        class="css-8nthb6"
+      >
+        <div
+          class="chakra-slider css-hgsblg"
+          style="position: relative; user-select: none; outline: 0;"
+          tabindex="-1"
+        >
+          <div
+            class="chakra-slider__track css-74jgqp"
+            id="slider-track-«rm2»"
+            style="position: absolute; top: 50%; transform: translateY(-50%); width: 100%;"
+          >
+            <div
+              class="chakra-slider__filled-track css-1c9c524"
+              style="position: absolute; top: 50%; transform: translateY(-50%); width: 44.44444444444444%; left: 0%;"
+            />
+          </div>
+          <div
+            aria-orientation="horizontal"
+            aria-valuemax="10"
+            aria-valuemin="1"
+            aria-valuenow="5"
+            class="chakra-slider__thumb animate-political-pulse css-1pju6r"
+            id="slider-thumb-«rm2»"
+            role="slider"
+            style="position: absolute; user-select: none; left: 44.44444444444444%; transform: translate(-50%, -50%) scale(var(--slider-thumb-scale, 1));"
+            tabindex="0"
+          >
+            <div
+              class="css-dey56m"
+            />
+          </div>
+          <input
+            type="hidden"
+            value="5"
+          />
+        </div>
+        <div
+          class="chakra-stack css-11jhv3r"
+        >
+          <p
+            class="chakra-text css-1xa8ojw"
+          >
+            Moderate
+          </p>
+          <p
+            class="chakra-text css-1xa8ojw"
+          >
+            Strong
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      class="chakra-form-control css-1kxonj9"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-1yjwtn"
+        for="field-«rm3»"
+        id="field-«rm3»-label"
+      >
+        Key Issues
+        <span
+          class="chakra-badge css-p9xwd1"
+        >
+          0
+           selected
+        </span>
+      </label>
+      <div
+        class="css-fpfgc4"
+      >
+        <button
+          class="chakra-button transition-all duration-200 css-87e2o4"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Healthcare Reform
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-87e2o4"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Climate Change
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-87e2o4"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Economic Policy
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-87e2o4"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Immigration
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-87e2o4"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Education
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-87e2o4"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Gun Rights
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-87e2o4"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Criminal Justice
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-87e2o4"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Foreign Policy
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-87e2o4"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Tax Policy
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-87e2o4"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Social Security
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-87e2o4"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Infrastructure
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-87e2o4"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Technology Regulation
+          </p>
+        </button>
+      </div>
+    </div>
+    <div
+      class="chakra-form-control css-1kxonj9"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-1yjwtn"
+        for="field-«rm4»"
+        id="field-«rm4»-label"
+      >
+        Personal Statement (Optional)
+      </label>
+      <textarea
+        class="chakra-textarea css-12frs1"
+        id="field-«rm4»"
+        placeholder="Describe your political views in your own words..."
+        rows="3"
+      />
+      <p
+        class="chakra-text css-77bz6f"
+      >
+        0
+        /500 characters
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PoliticalAlignmentSelector Snapshots matches snapshot with alignment preview visible 1`] = `
+<div
+  class="css-1arpkhw"
+>
+  <div
+    class="chakra-stack css-42ki38"
+  >
+    <div
+      class="css-0"
+    >
+      <p
+        class="chakra-text flex items-center gap-2 css-l4b12c"
+      >
+        <div
+          data-testid="flag-icon"
+          style="width: 20px; height: 20px;"
+        />
+        Political Alignment
+      </p>
+      <p
+        class="chakra-text css-89mcmc"
+      >
+        Choose your political position and customize your profile
+      </p>
+    </div>
+    <div
+      class="chakra-form-control css-1kxonj9"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-1yjwtn"
+        for="field-«rmk»"
+        id="field-«rmk»-label"
+      >
+        Political Position
+      </label>
+      <div
+        class="css-1kqsan7"
+      >
+        <button
+          aria-describedby="tooltip-«rmm»"
+          class="chakra-button 
+ transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg
+ ring-2 ring-opacity-50 political-conservative-500
+ bg-political-gradient-conservative
+ css-1gpmjfn"
+          type="button"
+        >
+          <div
+            class="chakra-stack css-ldoqu4"
+          >
+            <div
+              class="text-political-conservative-500"
+              data-testid="flag-icon"
+              style="width: 24px; height: 24px;"
+            />
+            <p
+              class="chakra-text css-qs00kd"
+            >
+              Conservative
+            </p>
+          </div>
+        </button>
+        <button
+          class="chakra-button 
+ transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg
+ 
+ 
+ css-1flsgnm"
+          type="button"
+        >
+          <div
+            class="chakra-stack css-ldoqu4"
+          >
+            <div
+              class="text-political-liberal-500"
+              data-testid="scale-icon"
+              style="width: 24px; height: 24px;"
+            />
+            <p
+              class="chakra-text css-1solopj"
+            >
+              Liberal
+            </p>
+          </div>
+        </button>
+        <button
+          class="chakra-button 
+ transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg
+ 
+ 
+ css-q87w4i"
+          type="button"
+        >
+          <div
+            class="chakra-stack css-ldoqu4"
+          >
+            <div
+              class="text-political-progressive-500"
+              data-testid="trending-up-icon"
+              style="width: 24px; height: 24px;"
+            />
+            <p
+              class="chakra-text css-1solopj"
+            >
+              Progressive
+            </p>
+          </div>
+        </button>
+        <button
+          class="chakra-button 
+ transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg
+ 
+ 
+ css-971eki"
+          type="button"
+        >
+          <div
+            class="chakra-stack css-ldoqu4"
+          >
+            <div
+              class="text-political-libertarian-500"
+              data-testid="users-icon"
+              style="width: 24px; height: 24px;"
+            />
+            <p
+              class="chakra-text css-1solopj"
+            >
+              Libertarian
+            </p>
+          </div>
+        </button>
+        <button
+          class="chakra-button 
+ transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg
+ 
+ 
+ css-1eqaa9g"
+          type="button"
+        >
+          <div
+            class="chakra-stack css-ldoqu4"
+          >
+            <div
+              class="text-political-moderate-500"
+              data-testid="heart-icon"
+              style="width: 24px; height: 24px;"
+            />
+            <p
+              class="chakra-text css-1solopj"
+            >
+              Independent
+            </p>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div
+      class="chakra-form-control css-1kxonj9"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-1yjwtn"
+        for="field-«rmv»"
+        id="field-«rmv»-label"
+      >
+        Political Intensity
+        <span
+          class="chakra-badge css-p9xwd1"
+        >
+          5
+          /10
+        </span>
+      </label>
+      <div
+        class="css-8nthb6"
+      >
+        <div
+          class="chakra-slider css-hgsblg"
+          style="position: relative; user-select: none; outline: 0;"
+          tabindex="-1"
+        >
+          <div
+            class="chakra-slider__track css-74jgqp"
+            id="slider-track-«rn0»"
+            style="position: absolute; top: 50%; transform: translateY(-50%); width: 100%;"
+          >
+            <div
+              class="chakra-slider__filled-track css-13jv3qn"
+              style="position: absolute; top: 50%; transform: translateY(-50%); width: 44.44444444444444%; left: 0%;"
+            />
+          </div>
+          <div
+            aria-orientation="horizontal"
+            aria-valuemax="10"
+            aria-valuemin="1"
+            aria-valuenow="5"
+            class="chakra-slider__thumb animate-political-pulse css-1pju6r"
+            id="slider-thumb-«rn0»"
+            role="slider"
+            style="position: absolute; user-select: none; left: 44.44444444444444%; transform: translate(-50%, -50%) scale(var(--slider-thumb-scale, 1));"
+            tabindex="0"
+          >
+            <div
+              class="css-12wwmdp"
+            />
+          </div>
+          <input
+            type="hidden"
+            value="5"
+          />
+        </div>
+        <div
+          class="chakra-stack css-11jhv3r"
+        >
+          <p
+            class="chakra-text css-1xa8ojw"
+          >
+            Moderate
+          </p>
+          <p
+            class="chakra-text css-1xa8ojw"
+          >
+            Strong
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      class="chakra-form-control css-1kxonj9"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-1yjwtn"
+        for="field-«rn1»"
+        id="field-«rn1»-label"
+      >
+        Key Issues
+        <span
+          class="chakra-badge css-p9xwd1"
+        >
+          0
+           selected
+        </span>
+      </label>
+      <div
+        class="css-fpfgc4"
+      >
+        <button
+          class="chakra-button transition-all duration-200 css-k7s1li"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Healthcare Reform
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-k7s1li"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Climate Change
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-k7s1li"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Economic Policy
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-k7s1li"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Immigration
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-k7s1li"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Education
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-k7s1li"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Gun Rights
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-k7s1li"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Criminal Justice
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-k7s1li"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Foreign Policy
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-k7s1li"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Tax Policy
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-k7s1li"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Social Security
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-k7s1li"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Infrastructure
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-k7s1li"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Technology Regulation
+          </p>
+        </button>
+      </div>
+    </div>
+    <div
+      class="chakra-form-control css-1kxonj9"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-1yjwtn"
+        for="field-«rn2»"
+        id="field-«rn2»-label"
+      >
+        Personal Statement (Optional)
+      </label>
+      <textarea
+        class="chakra-textarea css-fefi2i"
+        id="field-«rn2»"
+        placeholder="Describe your political views in your own words..."
+        rows="3"
+      />
+      <p
+        class="chakra-text css-77bz6f"
+      >
+        0
+        /500 characters
+      </p>
+    </div>
+    <div
+      class="animate-fade-in css-fp99dn"
+    >
+      <p
+        class="chakra-text css-1c1cpof"
+      >
+        Alignment Preview
+      </p>
+      <div
+        class="chakra-stack css-1skpokq"
+      >
+        <span
+          class="chakra-badge flex items-center gap-1 css-4dgbp1"
+        >
+          <div
+            data-testid="flag-icon"
+            style="width: 12px; height: 12px;"
+          />
+          Conservative
+        </span>
+        <span
+          class="chakra-badge css-146tv2v"
+        >
+          Intensity: 
+          5
+          /10
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PoliticalAlignmentSelector Snapshots matches snapshot with pre-filled values 1`] = `
+<div
+  class="css-1arpkhw"
+>
+  <div
+    class="chakra-stack css-42ki38"
+  >
+    <div
+      class="css-0"
+    >
+      <p
+        class="chakra-text flex items-center gap-2 css-l4b12c"
+      >
+        <div
+          data-testid="flag-icon"
+          style="width: 20px; height: 20px;"
+        />
+        Political Alignment
+      </p>
+      <p
+        class="chakra-text css-89mcmc"
+      >
+        Choose your political position and customize your profile
+      </p>
+    </div>
+    <div
+      class="chakra-form-control css-1kxonj9"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-1yjwtn"
+        for="field-«rm5»"
+        id="field-«rm5»-label"
+      >
+        Political Position
+      </label>
+      <div
+        class="css-1kqsan7"
+      >
+        <button
+          class="chakra-button 
+ transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg
+ 
+ 
+ css-419imf"
+          type="button"
+        >
+          <div
+            class="chakra-stack css-ldoqu4"
+          >
+            <div
+              class="text-political-conservative-500"
+              data-testid="flag-icon"
+              style="width: 24px; height: 24px;"
+            />
+            <p
+              class="chakra-text css-1solopj"
+            >
+              Conservative
+            </p>
+          </div>
+        </button>
+        <button
+          class="chakra-button 
+ transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg
+ 
+ 
+ css-1flsgnm"
+          type="button"
+        >
+          <div
+            class="chakra-stack css-ldoqu4"
+          >
+            <div
+              class="text-political-liberal-500"
+              data-testid="scale-icon"
+              style="width: 24px; height: 24px;"
+            />
+            <p
+              class="chakra-text css-1solopj"
+            >
+              Liberal
+            </p>
+          </div>
+        </button>
+        <button
+          class="chakra-button 
+ transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg
+ ring-2 ring-opacity-50 political-progressive-500
+ bg-political-gradient-progressive
+ css-8j6l1a"
+          type="button"
+        >
+          <div
+            class="chakra-stack css-ldoqu4"
+          >
+            <div
+              class="text-political-progressive-500"
+              data-testid="trending-up-icon"
+              style="width: 24px; height: 24px;"
+            />
+            <p
+              class="chakra-text css-qs00kd"
+            >
+              Progressive
+            </p>
+          </div>
+        </button>
+        <button
+          class="chakra-button 
+ transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg
+ 
+ 
+ css-971eki"
+          type="button"
+        >
+          <div
+            class="chakra-stack css-ldoqu4"
+          >
+            <div
+              class="text-political-libertarian-500"
+              data-testid="users-icon"
+              style="width: 24px; height: 24px;"
+            />
+            <p
+              class="chakra-text css-1solopj"
+            >
+              Libertarian
+            </p>
+          </div>
+        </button>
+        <button
+          class="chakra-button 
+ transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg
+ 
+ 
+ css-1eqaa9g"
+          type="button"
+        >
+          <div
+            class="chakra-stack css-ldoqu4"
+          >
+            <div
+              class="text-political-moderate-500"
+              data-testid="heart-icon"
+              style="width: 24px; height: 24px;"
+            />
+            <p
+              class="chakra-text css-1solopj"
+            >
+              Independent
+            </p>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div
+      class="chakra-form-control css-1kxonj9"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-1yjwtn"
+        for="field-«rmg»"
+        id="field-«rmg»-label"
+      >
+        Political Intensity
+        <span
+          class="chakra-badge css-p9xwd1"
+        >
+          8
+          /10
+        </span>
+      </label>
+      <div
+        class="css-8nthb6"
+      >
+        <div
+          class="chakra-slider css-hgsblg"
+          style="position: relative; user-select: none; outline: 0;"
+          tabindex="-1"
+        >
+          <div
+            class="chakra-slider__track css-74jgqp"
+            id="slider-track-«rmh»"
+            style="position: absolute; top: 50%; transform: translateY(-50%); width: 100%;"
+          >
+            <div
+              class="chakra-slider__filled-track css-1hlo7bq"
+              style="position: absolute; top: 50%; transform: translateY(-50%); width: 77.77777777777777%; left: 0%;"
+            />
+          </div>
+          <div
+            aria-orientation="horizontal"
+            aria-valuemax="10"
+            aria-valuemin="1"
+            aria-valuenow="8"
+            class="chakra-slider__thumb animate-political-pulse css-1pju6r"
+            id="slider-thumb-«rmh»"
+            role="slider"
+            style="position: absolute; user-select: none; left: 77.77777777777777%; transform: translate(-50%, -50%) scale(var(--slider-thumb-scale, 1));"
+            tabindex="0"
+          >
+            <div
+              class="css-13my58k"
+            />
+          </div>
+          <input
+            type="hidden"
+            value="8"
+          />
+        </div>
+        <div
+          class="chakra-stack css-11jhv3r"
+        >
+          <p
+            class="chakra-text css-1xa8ojw"
+          >
+            Moderate
+          </p>
+          <p
+            class="chakra-text css-1xa8ojw"
+          >
+            Strong
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      class="chakra-form-control css-1kxonj9"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-1yjwtn"
+        for="field-«rmi»"
+        id="field-«rmi»-label"
+      >
+        Key Issues
+        <span
+          class="chakra-badge css-p9xwd1"
+        >
+          2
+           selected
+        </span>
+      </label>
+      <div
+        class="css-fpfgc4"
+      >
+        <button
+          class="chakra-button transition-all duration-200 css-qoi157"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Healthcare Reform
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-qoi157"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Climate Change
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-1ngpw9m"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Economic Policy
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-1ngpw9m"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Immigration
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-1ngpw9m"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Education
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-1ngpw9m"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Gun Rights
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-1ngpw9m"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Criminal Justice
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-1ngpw9m"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Foreign Policy
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-1ngpw9m"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Tax Policy
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-1ngpw9m"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Social Security
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-1ngpw9m"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Infrastructure
+          </p>
+        </button>
+        <button
+          class="chakra-button transition-all duration-200 css-1ngpw9m"
+          type="button"
+        >
+          <p
+            class="chakra-text css-27pmac"
+          >
+            Technology Regulation
+          </p>
+        </button>
+      </div>
+    </div>
+    <div
+      class="chakra-form-control css-1kxonj9"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-1yjwtn"
+        for="field-«rmj»"
+        id="field-«rmj»-label"
+      >
+        Personal Statement (Optional)
+      </label>
+      <textarea
+        class="chakra-textarea css-kgsimr"
+        id="field-«rmj»"
+        placeholder="Describe your political views in your own words..."
+        rows="3"
+      >
+        Strong progressive values
+      </textarea>
+      <p
+        class="chakra-text css-77bz6f"
+      >
+        25
+        /500 characters
+      </p>
+    </div>
+    <div
+      class="animate-fade-in css-3ow9zu"
+    >
+      <p
+        class="chakra-text css-1c1cpof"
+      >
+        Alignment Preview
+      </p>
+      <div
+        class="chakra-stack css-1skpokq"
+      >
+        <span
+          class="chakra-badge flex items-center gap-1 css-14ecazi"
+        >
+          <div
+            data-testid="trending-up-icon"
+            style="width: 12px; height: 12px;"
+          />
+          Progressive
+        </span>
+        <span
+          class="chakra-badge css-146tv2v"
+        >
+          Intensity: 
+          8
+          /10
+        </span>
+        <span
+          class="chakra-badge css-1uygc3u"
+        >
+          2
+           key issues
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;

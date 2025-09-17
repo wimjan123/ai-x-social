@@ -1,0 +1,178 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PersonaCard (PersonaIndicator) Snapshots matches snapshot for AI persona with all indicators 1`] = `
+<div
+  class="flex items-center space-x-1.5 text-sm"
+>
+  <div
+    class="flex items-center justify-center"
+    title="AI Persona"
+  >
+    <div
+      class="w-4 h-4 text-x-blue"
+      data-testid="bot-icon"
+    />
+  </div>
+  <div
+    class="rounded-full font-medium text-white px-2 py-1 text-xs bg-political-progressive-500"
+    title="Political alignment: Progressive"
+  >
+    Progressive
+  </div>
+  <div
+    class="flex items-center space-x-1 rounded-full bg-gradient-to-r px-2 py-1 text-xs [object Object]"
+    title="Influence level: mega"
+  >
+    <div
+      class="w-3 h-3 text-white"
+      data-testid="zap-icon"
+    />
+    <span
+      class="text-white font-medium capitalize"
+    >
+      mega
+    </span>
+  </div>
+  <div
+    class="rounded-full bg-x-blue text-white font-medium px-2 py-1 text-xs"
+    title="Response style: emotional"
+  >
+    emotional
+  </div>
+</div>
+`;
+
+exports[`PersonaCard (PersonaIndicator) Snapshots matches snapshot for celebrity influencer 1`] = `
+<div
+  class="flex items-center space-x-1.5 text-sm"
+>
+  <div
+    class="flex items-center justify-center"
+    title="Verified User"
+  >
+    <div
+      class="w-4 h-4 text-x-blue"
+      data-testid="shield-icon"
+    />
+  </div>
+  <div
+    class="flex items-center space-x-1 rounded-full bg-gradient-to-r px-2 py-1 text-xs [object Object]"
+    title="Influence level: celebrity"
+  >
+    <div
+      class="w-3 h-3 text-white"
+      data-testid="zap-icon"
+    />
+    <span
+      class="text-white font-medium capitalize"
+    >
+      celebrity
+    </span>
+  </div>
+</div>
+`;
+
+exports[`PersonaCard (PersonaIndicator) Snapshots matches snapshot for different sizes 1`] = `
+<div
+  class="flex items-center space-x-1.5 text-base"
+>
+  <div
+    class="flex items-center justify-center"
+    title="AI Persona"
+  >
+    <div
+      class="w-5 h-5 text-x-blue"
+      data-testid="bot-icon"
+    />
+  </div>
+  <div
+    class="rounded-full font-medium text-white px-2.5 py-1 text-sm bg-political-progressive-500"
+    title="Political alignment: Progressive"
+  >
+    Progressive
+  </div>
+  <div
+    class="flex items-center space-x-1 rounded-full bg-gradient-to-r px-2.5 py-1 text-sm [object Object]"
+    title="Influence level: mega"
+  >
+    <div
+      class="w-3.5 h-3.5 text-white"
+      data-testid="zap-icon"
+    />
+    <span
+      class="text-white font-medium capitalize"
+    >
+      mega
+    </span>
+  </div>
+  <div
+    class="rounded-full bg-x-blue text-white font-medium px-2.5 py-1 text-sm"
+    title="Response style: emotional"
+  >
+    emotional
+  </div>
+</div>
+`;
+
+exports[`PersonaCard (PersonaIndicator) Snapshots matches snapshot for regular user 1`] = `
+<div
+  class="flex items-center space-x-1.5 text-sm"
+>
+  <div
+    class="flex items-center justify-center"
+    title="User"
+  >
+    <div
+      class="w-4 h-4 text-x-light-gray"
+      data-testid="user-icon"
+    />
+  </div>
+</div>
+`;
+
+exports[`PersonaCard (PersonaIndicator) Snapshots matches snapshot for user with political alignment 1`] = `
+<div
+  class="flex items-center space-x-1.5 text-sm"
+>
+  <div
+    class="flex items-center justify-center"
+    title="User"
+  >
+    <div
+      class="w-4 h-4 text-x-light-gray"
+      data-testid="user-icon"
+    />
+  </div>
+  <div
+    class="rounded-full font-medium text-white px-2 py-1 text-xs bg-political-conservative-500"
+    title="Political alignment: Conservative"
+  >
+    C
+  </div>
+</div>
+`;
+
+exports[`PersonaCard (PersonaIndicator) Snapshots matches snapshot for verified user 1`] = `
+<div
+  class="flex items-center space-x-1.5 text-sm"
+>
+  <div
+    class="flex items-center justify-center"
+    title="Verified User"
+  >
+    <div
+      class="w-4 h-4 text-x-blue"
+      data-testid="shield-icon"
+    />
+  </div>
+  <div
+    class="flex items-center space-x-1 rounded-full bg-gradient-to-r px-2 py-1 text-xs [object Object]"
+    title="Influence level: macro"
+  >
+    <div
+      class="w-3 h-3 text-white"
+      data-testid="zap-icon"
+    />
+  </div>
+</div>
+`;
