@@ -1,0 +1,127 @@
+# Backend .dockerignore - Optimized for production builds
+# Excludes unnecessary files to reduce build context and improve security
+
+# Git and version control
+.git
+.gitignore
+.gitattributes
+.github/
+
+# Documentation (exclude from production builds)
+README.md
+CHANGELOG.md
+LICENSE
+*.md
+docs/
+specs/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.editorconfig
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs and runtime data
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+logs/
+*.log
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage and testing artifacts
+coverage/
+*.lcov
+.nyc_output
+test-results/
+playwright-report/
+
+# node_modules (will be installed during build)
+node_modules/
+jspm_packages/
+
+# Build outputs (will be generated during build)
+dist/
+build/
+out/
+
+# Environment files (should be mounted or passed as env vars)
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+
+# Cache directories
+.npm
+.cache/
+.eslintcache
+.stylelintcache
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Security and secrets
+secrets/
+private/
+*.key
+*.pem
+*.crt
+*.p12
+
+# Database files (should be external)
+*.db
+*.sqlite
+*.sqlite3
+
+# Docker files (avoid recursive builds)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Development tools and configs
+.prettierrc*
+.eslintrc*
+jest.config.*
+tsconfig.json
+nodemon.json
+
+# Development scripts
+scripts/dev/
+scripts/test/
+
+# Analytics and monitoring (production configs only)
+.newrelic.js
+
+# Package manager files (keep package.json and package-lock.json)
+yarn.lock
+pnpm-lock.yaml
+
+# Backup files
+*.bak
+*.backup
+
+# Development Claude context
+.claude/
+.specify/

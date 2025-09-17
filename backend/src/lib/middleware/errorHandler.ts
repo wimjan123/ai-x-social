@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
-import { logger } from '@/lib/logger';
+import { logger, logSecurityEvent } from '@/lib/logger';
 import { ApiResponse } from '@/lib/types';
 
 export interface AppError extends Error {
@@ -72,22 +72,50 @@ export const errorHandler = (
     isOperational = true;
   }
 
-  // Log error details
+  // Enhanced error logging with security monitoring
+  const errorContext = {
+    requestId: res.locals?.requestId,
+    url: req.url,
+    method: req.method,
+    statusCode,
+    message: error.message,
+    userAgent: req.get('User-Agent'),
+    ip: req.ip || req.connection.remoteAddress,
+    userId: req.user?.id,
+    timestamp: new Date().toISOString(),
+  };
+
   if (!isOperational || statusCode >= 500) {
-    logger.error('Unhandled error', {
-      url: req.url,
-      method: req.method,
-      statusCode,
-      message: error.message,
+    logger.error('Unhandled Error', {
+      ...errorContext,
       stack: error.stack,
       isOperational,
+      severity: 'critical',
     });
+
+    // Log potential security issues
+    if (statusCode === 500 && error.message.includes('SQL')) {
+      logSecurityEvent('POTENTIAL_SQL_INJECTION', {
+        ...errorContext,
+        errorType: 'sql_error',
+      });
+    }
   } else {
-    logger.warn('Handled error', {
-      url: req.url,
-      method: req.method,
-      statusCode,
-      message: error.message,
+    logger.warn('Handled Error', errorContext);
+  }
+
+  // Track suspicious patterns
+  if (statusCode === 401 || statusCode === 403) {
+    logSecurityEvent('UNAUTHORIZED_ACCESS_ATTEMPT', {
+      ...errorContext,
+      errorType: 'auth_failure',
+    });
+  }
+
+  if (statusCode === 429) {
+    logSecurityEvent('RATE_LIMIT_EXCEEDED', {
+      ...errorContext,
+      errorType: 'rate_limit',
     });
   }
 

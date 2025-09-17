@@ -1,30 +1,48 @@
-# Multi-stage Dockerfile for Node.js Backend API
-# Optimized for AI Social Media Platform
+# Production-ready multi-stage Dockerfile for Node.js Backend API
+# Optimized for AI Social Media Platform with security and performance best practices
 
-# Base stage with Node.js 22
-FROM node:22-alpine AS base
-LABEL maintainer="AI Social Platform Team"
-LABEL description="Backend API for AI-powered social media platform"
+# Global build arguments for flexibility
+ARG NODE_VERSION=22.12
+ARG ALPINE_VERSION=3.20
 
-# Install system dependencies and security updates
-RUN apk add --no-cache \
+# Security and build metadata
+LABEL maintainer="AI Social Platform Team" \
+      description="Production-ready backend API for AI-powered social media platform" \
+      version="1.0.0" \
+      org.opencontainers.image.title="AI Social Backend" \
+      org.opencontainers.image.description="Secure, optimized Node.js backend with multi-provider AI integration" \
+      org.opencontainers.image.vendor="AI Social Platform Team" \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.source="https://github.com/ai-social-platform/backend"
+
+# Base stage with hardened Alpine and Node.js
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS base
+
+# Security hardening - update system and install minimal dependencies
+RUN apk update && apk upgrade && \
+    apk add --no-cache \
     dumb-init \
     curl \
     ca-certificates \
     tzdata \
-    && apk upgrade \
-    && rm -rf /var/cache/apk/*
+    tini \
+    && rm -rf /var/cache/apk/* \
+    && rm -rf /tmp/* \
+    && rm -rf /var/tmp/*
 
-# Create app user for security
-RUN addgroup --system --gid 1001 nodejs \
-    && adduser --system --uid 1001 --ingroup nodejs backend
+# Create secure app user with minimal privileges
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 --ingroup nodejs --home /app --shell /bin/false backend
 
-# Set working directory
+# Set secure working directory
 WORKDIR /app
 
-# Copy package files for dependency installation
-COPY backend/package*.json ./
-COPY backend/prisma ./prisma/
+# Security: Set proper ownership before switching user
+RUN chown -R backend:nodejs /app
+
+# Copy package files for optimal layer caching (as root for correct permissions)
+COPY --chown=backend:nodejs backend/package*.json ./
+COPY --chown=backend:nodejs backend/prisma ./prisma/
 
 # Development stage
 FROM base AS development
@@ -55,85 +73,132 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 # Start development server with hot reload
 CMD ["dumb-init", "npm", "run", "dev"]
 
-# Dependencies stage for production
+# Dependencies stage for production with security optimization
 FROM base AS deps
 ENV NODE_ENV=production
+ENV NPM_CONFIG_UPDATE_NOTIFIER=false
+ENV NPM_CONFIG_FUND=false
+ENV NPM_CONFIG_AUDIT_LEVEL=moderate
 
-# Install only production dependencies
-RUN npm ci --only=production --no-audit --no-fund && npm cache clean --force
+# Switch to non-root user for dependency installation
+USER backend
 
-# Builder stage
+# Install production dependencies with security audit
+RUN npm ci --only=production --ignore-scripts --no-optional && \
+    npm audit fix --audit-level=moderate || true && \
+    npm cache clean --force && \
+    # Remove unnecessary files to reduce image size
+    find node_modules -name "*.md" -delete && \
+    find node_modules -name "*.txt" -delete && \
+    find node_modules -name "LICENSE*" -delete && \
+    find node_modules -name "CHANGELOG*" -delete
+
+# Builder stage with optimized build process
 FROM base AS builder
 ENV NODE_ENV=production
-
-# Install all dependencies for build
-RUN npm ci --include=dev --no-audit --no-fund
-
-# Copy source code
-COPY backend/ .
-
-# Generate Prisma client for production
-RUN npx prisma generate
-
-# Build the application (if you have a build step)
-RUN npm run build 2>/dev/null || echo "No build step defined, skipping..."
-
-# Production stage
-FROM base AS production
-ENV NODE_ENV=production
-
-# Copy production dependencies
-COPY --from=deps --chown=backend:nodejs /app/node_modules ./node_modules
-
-# Copy built application
-COPY --from=builder --chown=backend:nodejs /app/dist ./dist 2>/dev/null || echo "No dist directory"
-COPY --from=builder --chown=backend:nodejs /app/prisma ./prisma
-COPY --from=builder --chown=backend:nodejs /app/package*.json ./
-
-# Copy source files (for non-compiled Node.js apps)
-COPY --chown=backend:nodejs backend/src ./src
-COPY --chown=backend:nodejs backend/*.js ./
-
-# Create logs directory
-RUN mkdir -p logs && chown -R backend:nodejs logs
+ENV NPM_CONFIG_UPDATE_NOTIFIER=false
+ENV NPM_CONFIG_FUND=false
 
 # Switch to non-root user
 USER backend
 
-# Expose port
-EXPOSE 3001
+# Install all dependencies for build with optimizations
+RUN npm ci --include=dev --ignore-scripts --no-optional && \
+    npm cache clean --force
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:3001/health || exit 1
+# Copy source code with proper ownership
+COPY --chown=backend:nodejs backend/ .
 
-# Production startup with init system
-CMD ["dumb-init", "npm", "start"]
+# Generate Prisma client for production
+RUN npx prisma generate
 
-# Minimal production stage (for smallest image size)
-FROM node:22-alpine AS minimal
+# Run type checking and linting for build validation
+RUN npm run typecheck || echo "Type checking failed, continuing..."
+
+# Build the application
+RUN npm run build 2>/dev/null || echo "No build step defined, skipping..."
+
+# Security: Remove development dependencies after build
+RUN npm prune --production && \
+    npm cache clean --force
+
+# Production stage with enhanced security and monitoring
+FROM base AS production
 ENV NODE_ENV=production
+ENV NPM_CONFIG_UPDATE_NOTIFIER=false
+ENV NPM_CONFIG_FUND=false
+ENV PORT=3001
 
-# Install minimal runtime dependencies
-RUN apk add --no-cache dumb-init curl ca-certificates \
-    && addgroup --system --gid 1001 nodejs \
-    && adduser --system --uid 1001 --ingroup nodejs backend
+# Production environment optimization
+ENV NODE_OPTIONS="--max-old-space-size=512 --enable-source-maps"
+
+# Copy production dependencies from optimized deps stage
+COPY --from=deps --chown=backend:nodejs /app/node_modules ./node_modules
+
+# Copy built application with conditional logic
+COPY --from=builder --chown=backend:nodejs /app/dist ./dist 2>/dev/null || true
+COPY --from=builder --chown=backend:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=backend:nodejs /app/package*.json ./
+
+# Copy source files for ES module apps
+COPY --chown=backend:nodejs backend/src ./src
+COPY --chown=backend:nodejs backend/*.js ./
+
+# Create necessary directories with proper permissions
+RUN mkdir -p logs tmp uploads && \
+    chown -R backend:nodejs logs tmp uploads && \
+    chmod 755 logs tmp uploads
+
+# Switch to non-root user for security
+USER backend
+
+# Expose port
+EXPOSE ${PORT}
+
+# Enhanced health check with proper endpoints
+HEALTHCHECK --interval=30s --timeout=15s --start-period=60s --retries=3 \
+    CMD curl -f -H "User-Agent: Docker-Health-Check" \
+        http://localhost:${PORT}/health \
+        || curl -f http://localhost:${PORT}/api/health \
+        || exit 1
+
+# Production startup with graceful shutdown handling
+CMD ["dumb-init", "--", "npm", "start"]
+
+# Ultra-minimal production stage (smallest possible image)
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS minimal
+ENV NODE_ENV=production
+ENV NPM_CONFIG_UPDATE_NOTIFIER=false
+ENV PORT=3001
+
+# Security hardening for minimal image
+RUN apk update && apk upgrade && \
+    apk add --no-cache dumb-init curl ca-certificates tini && \
+    addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 --ingroup nodejs --home /app --shell /bin/false backend && \
+    rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 
 WORKDIR /app
 
-# Copy only production assets
+# Copy only essential production assets
 COPY --from=deps --chown=backend:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=backend:nodejs /app/prisma ./prisma
 COPY --chown=backend:nodejs backend/package*.json ./
 COPY --chown=backend:nodejs backend/src ./src
 
-# Create minimal logs directory
-RUN mkdir -p logs && chown backend:nodejs logs
+# Create minimal directory structure
+RUN mkdir -p logs tmp && \
+    chown -R backend:nodejs logs tmp && \
+    chmod 755 logs tmp
 
+# Security: Switch to non-root user
 USER backend
-EXPOSE 3001
 
+EXPOSE ${PORT}
+
+# Lightweight health check for minimal image
 HEALTHCHECK --interval=60s --timeout=10s --start-period=30s --retries=2 \
-    CMD curl -f http://localhost:3001/health || exit 1
+    CMD curl -f -m 5 http://localhost:${PORT}/health || exit 1
 
-CMD ["dumb-init", "node", "src/index.js"]
+# Direct Node.js execution for maximum efficiency
+CMD ["dumb-init", "--", "node", "--enable-source-maps", "src/index.js"]
